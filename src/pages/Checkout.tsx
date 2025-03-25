@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/components/ui/use-toast';
 import { useCart } from '@/context/CartContext';
-import { Rupee, Check, ChevronRight } from 'lucide-react';
+import { DollarSign, Check, ChevronRight } from 'lucide-react';
 
 const CheckoutPage = () => {
   const { items, clearCart, totalPrice } = useCart();
@@ -76,7 +76,7 @@ const CheckoutPage = () => {
                     </div>
                   </div>
                   <div className="font-semibold flex items-center">
-                    <Rupee className="h-4 w-4 mr-1 inline-block" />
+                    <DollarSign className="h-4 w-4 mr-1 inline-block" />
                     {(cartItem.price * cartItem.quantity).toFixed(2)}
                   </div>
                 </div>
@@ -98,7 +98,7 @@ const CheckoutPage = () => {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
                   <div className="flex items-center">
-                    <Rupee className="h-4 w-4 mr-1" />
+                    <DollarSign className="h-4 w-4 mr-1" />
                     <span>{totalPrice.toFixed(2)}</span>
                   </div>
                 </div>
@@ -106,7 +106,7 @@ const CheckoutPage = () => {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
                   <div className="flex items-center">
-                    <Rupee className="h-4 w-4 mr-1" />
+                    <DollarSign className="h-4 w-4 mr-1" />
                     <span>{(totalPrice > 0 ? 150 : 0).toFixed(2)}</span>
                   </div>
                 </div>
@@ -116,7 +116,7 @@ const CheckoutPage = () => {
                 <div className="flex justify-between font-semibold">
                   <span>Total</span>
                   <div className="flex items-center">
-                    <Rupee className="h-4 w-4 mr-1" />
+                    <DollarSign className="h-4 w-4 mr-1" />
                     <span>{(totalPrice + (totalPrice > 0 ? 150 : 0)).toFixed(2)}</span>
                   </div>
                 </div>

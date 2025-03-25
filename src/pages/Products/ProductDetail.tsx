@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
@@ -23,11 +22,10 @@ import {
   ShoppingCart,
   Share2,
   FileImage,
-  FilePdf,
-  FileAi,
+  File,
   UploadCloud,
   Check,
-  Rupee,
+  DollarSign,
 } from 'lucide-react';
 
 interface Review {
@@ -296,9 +294,9 @@ const ProductDetail = () => {
     
     switch (extension) {
       case 'pdf':
-        return <FilePdf className="h-5 w-5 text-red-500" />;
+        return <File className="h-5 w-5 text-red-500" />;
       case 'ai':
-        return <FileAi className="h-5 w-5 text-amber-500" />;
+        return <File className="h-5 w-5 text-amber-500" />;
       case 'cdr':
         return <FileImage className="h-5 w-5 text-blue-500" />;
       default:
@@ -387,13 +385,13 @@ const ProductDetail = () => {
             
             <div className="flex items-baseline mb-4">
               <span className="flex items-center text-2xl font-bold">
-                <Rupee className="h-5 w-5 mr-1" />
+                <DollarSign className="h-5 w-5 mr-1" />
                 <span>{totalPrice().toFixed(2)}</span>
               </span>
               
               {product.originalPrice && (
                 <div className="flex items-center ml-3 text-muted-foreground line-through">
-                  <Rupee className="h-3 w-3 mr-1" />
+                  <DollarSign className="h-3 w-3 mr-1" />
                   <span>{product.originalPrice.toFixed(2)}</span>
                 </div>
               )}
@@ -549,10 +547,10 @@ const ProductDetail = () => {
                   
                   <div className="flex flex-wrap gap-2">
                     <Badge variant="outline" className="flex items-center gap-1">
-                      <FilePdf className="h-3 w-3" /> PDF
+                      <File className="h-3 w-3 text-red-500" /> PDF
                     </Badge>
                     <Badge variant="outline" className="flex items-center gap-1">
-                      <FileAi className="h-3 w-3" /> AI
+                      <File className="h-3 w-3 text-amber-500" /> AI
                     </Badge>
                     <Badge variant="outline" className="flex items-center gap-1">
                       <FileImage className="h-3 w-3" /> CDR
@@ -616,7 +614,7 @@ const ProductDetail = () => {
                     <h3 className="font-medium line-clamp-1">{relatedProduct.name}</h3>
                     <div className="flex items-center mt-2">
                       <div className="flex items-center">
-                        <Rupee className="h-4 w-4 mr-1" />
+                        <DollarSign className="h-4 w-4 mr-1" />
                         <span className="font-semibold">{relatedProduct.price.toFixed(2)}</span>
                       </div>
                     </div>

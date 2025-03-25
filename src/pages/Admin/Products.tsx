@@ -29,8 +29,8 @@ import {
   ImagePlus,
   Download,
   FileImage,
-  FilePdf,
-  FileAi
+  File,
+  Indian
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { Badge } from '@/components/ui/badge';
@@ -167,8 +167,8 @@ const AdminProducts = () => {
   };
 
   const getFileIcon = (fileName: string) => {
-    if (fileName.endsWith('.pdf')) return <FilePdf className="h-4 w-4 text-red-500" />;
-    if (fileName.endsWith('.ai')) return <FileAi className="h-4 w-4 text-amber-500" />;
+    if (fileName.endsWith('.pdf')) return <File className="h-4 w-4 text-red-500" />;
+    if (fileName.endsWith('.ai')) return <File className="h-4 w-4 text-amber-500" />;
     if (fileName.endsWith('.cdr')) return <FileImage className="h-4 w-4 text-blue-500" />;
     return <FileImage className="h-4 w-4" />;
   };
