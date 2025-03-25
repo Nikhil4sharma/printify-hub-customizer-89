@@ -20,6 +20,9 @@ import AdminProducts from "./pages/Admin/Products";
 import AdminCategories from "./pages/Admin/Categories";
 import AdminSettings from "./pages/Admin/Settings";
 import AdminLogin from "./pages/Admin/Login";
+import Login from "./pages/Auth/Login";
+import Register from "./pages/Auth/Register";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
 
 // Create a new QueryClient instance outside the component
 const queryClient = new QueryClient();
@@ -48,9 +51,9 @@ const App = () => (
                     <Route path="/products/:category" element={<div>Product Listing Page</div>} />
                     <Route path="/products/:category/:id" element={<div>Product Detail Page</div>} />
                     
-                    <Route path="/login" element={<div>Login Page</div>} />
-                    <Route path="/register" element={<div>Register Page</div>} />
-                    <Route path="/forgot-password" element={<div>Forgot Password Page</div>} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
                     
                     <Route path="/cart" element={<div>Cart Page</div>} />
                     <Route path="/checkout" element={<div>Checkout Page</div>} />
