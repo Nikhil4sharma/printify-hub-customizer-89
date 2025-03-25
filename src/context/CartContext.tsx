@@ -6,6 +6,8 @@ export interface CustomizationOptions {
   orientation: 'Horizontal' | 'Vertical';
   material: string;
   addons: string[];
+  quantity?: number;
+  designFile?: string;
 }
 
 export interface CartItem {
@@ -48,7 +50,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         i.customization.size === item.customization.size &&
         i.customization.orientation === item.customization.orientation &&
         i.customization.material === item.customization.material &&
-        JSON.stringify(i.customization.addons.sort()) === JSON.stringify(item.customization.addons.sort())
+        JSON.stringify(i.customization.addons.sort()) === JSON.stringify(item.customization.addons.sort()) &&
+        i.customization.quantity === item.customization.quantity
     );
 
     if (existingItemIndex > -1) {

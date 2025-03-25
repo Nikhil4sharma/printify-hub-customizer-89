@@ -21,8 +21,19 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Search, Plus, Edit, Trash2, ImagePlus } from 'lucide-react';
+import { 
+  Search, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  ImagePlus,
+  Download,
+  FileImage,
+  FilePdf,
+  FileAi
+} from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { Badge } from '@/components/ui/badge';
 
 const AdminProducts = () => {
   const { toast } = useToast();
@@ -32,13 +43,82 @@ const AdminProducts = () => {
 
   // Mock product data - would be fetched from API in a real application
   const products = [
-    { id: 1, name: 'Standard Business Cards', category: 'Business Cards', price: '₹48.75', stock: 'In Stock', variants: 4, images: ['https://images.unsplash.com/photo-1589998059171-988d887df646', 'https://images.unsplash.com/photo-1609209120115-619e31588ab8'] },
-    { id: 2, name: 'Premium Letterheads', category: 'Stationery', price: '₹36.20', stock: 'In Stock', variants: 2, images: ['https://images.unsplash.com/photo-1568205631288-1469d8298ce0'] },
-    { id: 3, name: 'Paper Carry Bags', category: 'Carry Bags', price: '₹24.50', stock: 'Low Stock', variants: 3, images: ['https://images.unsplash.com/photo-1591197172062-c718f82aba20'] },
-    { id: 4, name: 'Custom Packaging Boxes', category: 'Boxes', price: '₹75.00', stock: 'In Stock', variants: 6, images: ['https://images.unsplash.com/photo-1589939705384-5185137a7f0f'] },
-    { id: 5, name: 'Luxury Business Cards', category: 'Business Cards', price: '₹65.30', stock: 'Out of Stock', variants: 3, images: ['https://images.unsplash.com/photo-1616793944642-81493deb9b5e'] },
-    { id: 6, name: 'Envelopes', category: 'Stationery', price: '₹18.90', stock: 'In Stock', variants: 4, images: ['https://images.unsplash.com/photo-1579213838826-dabf29071388'] },
-    { id: 7, name: 'Gift Boxes', category: 'Boxes', price: '₹42.99', stock: 'In Stock', variants: 5, images: ['https://images.unsplash.com/photo-1513201099705-a9746e1e201f'] },
+    { 
+      id: 1, 
+      name: 'Standard Business Cards', 
+      category: 'Business Cards', 
+      price: '₹1250.00', 
+      stock: 'In Stock', 
+      variants: 4, 
+      images: ['https://images.unsplash.com/photo-1589998059171-988d887df646', 'https://images.unsplash.com/photo-1609209120115-619e31588ab8'],
+      customerFiles: [
+        { id: 'file1', fileName: 'business_card_design.pdf', customerName: 'Rahul Sharma', uploadDate: '2023-05-15' },
+        { id: 'file2', fileName: 'logo_for_cards.ai', customerName: 'Priya Patel', uploadDate: '2023-05-20' }
+      ]
+    },
+    { 
+      id: 2, 
+      name: 'Premium Letterheads', 
+      category: 'Stationery', 
+      price: '₹950.00', 
+      stock: 'In Stock', 
+      variants: 2, 
+      images: ['https://images.unsplash.com/photo-1568205631288-1469d8298ce0'],
+      customerFiles: [
+        { id: 'file3', fileName: 'letterhead_final.pdf', customerName: 'Amit Singh', uploadDate: '2023-05-18' }
+      ]
+    },
+    { 
+      id: 3, 
+      name: 'Paper Carry Bags', 
+      category: 'Carry Bags', 
+      price: '₹750.00',  
+      variants: 3, 
+      images: ['https://images.unsplash.com/photo-1591197172062-c718f82aba20'],
+      customerFiles: []
+    },
+    { 
+      id: 4, 
+      name: 'Custom Packaging Boxes', 
+      category: 'Boxes', 
+      price: '₹1550.00',  
+      variants: 6, 
+      images: ['https://images.unsplash.com/photo-1589939705384-5185137a7f0f'],
+      customerFiles: [
+        { id: 'file4', fileName: 'box_design.cdr', customerName: 'Neha Gupta', uploadDate: '2023-05-22' }
+      ]
+    },
+    { 
+      id: 5, 
+      name: 'Luxury Business Cards', 
+      category: 'Business Cards', 
+      price: '₹1825.00',  
+      variants: 3, 
+      images: ['https://images.unsplash.com/photo-1616793944642-81493deb9b5e'],
+      customerFiles: [
+        { id: 'file5', fileName: 'gold_foil_design.ai', customerName: 'Vikram Patel', uploadDate: '2023-05-25' }
+      ]
+    },
+    { 
+      id: 6, 
+      name: 'Envelopes', 
+      category: 'Stationery', 
+      price: '₹450.00',  
+      variants: 4, 
+      images: ['https://images.unsplash.com/photo-1579213838826-dabf29071388'],
+      customerFiles: []
+    },
+    { 
+      id: 7, 
+      name: 'Gift Boxes', 
+      category: 'Boxes', 
+      price: '₹850.00',  
+      variants: 5, 
+      images: ['https://images.unsplash.com/photo-1513201099705-a9746e1e201f'],
+      customerFiles: [
+        { id: 'file6', fileName: 'gift_box_artwork.pdf', customerName: 'Sanjay Mehta', uploadDate: '2023-05-30' }
+      ]
+    },
   ];
 
   const handleEditProduct = (product: any) => {
@@ -77,14 +157,20 @@ const AdminProducts = () => {
     });
     setIsEditOpen(false);
   };
+  
+  const handleDownloadFile = (fileName: string) => {
+    // In a real app, this would fetch the file from storage and trigger download
+    toast({
+      title: "Downloading file",
+      description: `Downloading ${fileName}`,
+    });
+  };
 
-  const getStockColor = (stock: string) => {
-    switch(stock) {
-      case 'In Stock': return 'text-green-600';
-      case 'Low Stock': return 'text-yellow-600';
-      case 'Out of Stock': return 'text-red-600';
-      default: return '';
-    }
+  const getFileIcon = (fileName: string) => {
+    if (fileName.endsWith('.pdf')) return <FilePdf className="h-4 w-4 text-red-500" />;
+    if (fileName.endsWith('.ai')) return <FileAi className="h-4 w-4 text-amber-500" />;
+    if (fileName.endsWith('.cdr')) return <FileImage className="h-4 w-4 text-blue-500" />;
+    return <FileImage className="h-4 w-4" />;
   };
 
   return (
@@ -119,9 +205,8 @@ const AdminProducts = () => {
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Price</TableHead>
-              <TableHead>Stock</TableHead>
-              <TableHead>Variants</TableHead>
               <TableHead>Images</TableHead>
+              <TableHead>Customer Files</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -132,9 +217,16 @@ const AdminProducts = () => {
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell>{product.category}</TableCell>
                 <TableCell>{product.price}</TableCell>
-                <TableCell className={getStockColor(product.stock)}>{product.stock}</TableCell>
-                <TableCell>{product.variants}</TableCell>
                 <TableCell>{product.images?.length || 0}</TableCell>
+                <TableCell>
+                  {product.customerFiles.length > 0 ? (
+                    <Badge variant="outline" className="font-normal">
+                      {product.customerFiles.length} file(s)
+                    </Badge>
+                  ) : (
+                    <span className="text-muted-foreground text-sm">No files</span>
+                  )}
+                </TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="sm" onClick={() => handleEditProduct(product)}>
                     <Edit className="h-4 w-4 mr-1" />
@@ -181,20 +273,38 @@ const AdminProducts = () => {
                   defaultValue={currentProduct?.price?.replace('₹', '')} 
                 />
               </div>
+              
               <div className="space-y-2">
-                <Label htmlFor="stock">Stock Status</Label>
-                <Input 
-                  id="stock" 
-                  defaultValue={currentProduct?.stock} 
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="variants">Variants</Label>
-                <Input 
-                  id="variants" 
-                  type="number"
-                  defaultValue={currentProduct?.variants} 
-                />
+                <Label>Customer Files</Label>
+                {currentProduct?.customerFiles && currentProduct.customerFiles.length > 0 ? (
+                  <div className="space-y-3 border rounded-md p-3">
+                    {currentProduct.customerFiles.map((file: any) => (
+                      <div key={file.id} className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-2">
+                          {getFileIcon(file.fileName)}
+                          <div>
+                            <p className="font-medium">{file.fileName}</p>
+                            <p className="text-xs text-muted-foreground">
+                              Uploaded by {file.customerName} on {file.uploadDate}
+                            </p>
+                          </div>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleDownloadFile(file.fileName)}
+                        >
+                          <Download className="h-4 w-4 mr-1" />
+                          Download
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-sm text-muted-foreground p-3 border rounded-md">
+                    No customer files uploaded
+                  </div>
+                )}
               </div>
             </div>
             

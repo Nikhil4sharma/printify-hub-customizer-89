@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+
+import React, { useState, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -15,15 +15,19 @@ import {
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 import {
-  BadgeIndianRupee,
-  Check,
   ChevronRight,
   Minus,
   Plus,
   ShoppingCart,
   Share2,
+  FileImage,
+  FilePdf,
+  FileAi,
+  UploadCloud,
+  Check,
+  Rupee,
 } from 'lucide-react';
 
 interface Review {
@@ -43,24 +47,12 @@ interface ProductSpec {
   [key: string]: string | undefined;
 }
 
-interface ProductVariant {
-  id: string;
-  name: string;
-  price: number;
-}
-
-interface ProductAddon {
-  id: string;
-  name: string;
-  price: number;
-}
-
 interface ProductOptions {
   sizes?: string[];
-  materials?: string[];
+  thicknesses?: string[];
   orientations?: string[];
-  finishes?: string[];
-  addons?: ProductAddon[];
+  treatments?: string[];
+  quantities?: number[];
 }
 
 interface Product {
@@ -75,20 +67,19 @@ interface Product {
   image: string;
   gallery?: string[];
   specs?: ProductSpec;
-  variants?: ProductVariant[];
   options?: ProductOptions;
   featured: boolean;
   relatedProducts?: string[];
   reviews?: Review[];
 }
 
-// Mock product data - in a real app, this would come from an API
+// Mock product data
 const allProducts: Product[] = [
   {
     id: '1',
     name: 'Premium Business Cards',
     description: 'High-quality business cards printed on premium stock. Perfect for making a lasting impression in any professional setting.',
-    longDescription: 'Make a lasting impression with our Premium Business Cards. These high-quality cards are printed on premium 350 GSM art card stock with a matte, gloss, or silk finish of your choice. Each card is carefully crafted to showcase your brand identity with precise color reproduction and crisp details. Whether you\'re networking at an event or sharing your contact information with a potential client, these business cards are designed to make you stand out from the crowd.',
+    longDescription: 'Make a lasting impression with our Premium Business Cards. These high-quality cards are printed on premium stock with a matte, gloss, or silk finish of your choice. Each card is carefully crafted to showcase your brand identity with precise color reproduction and crisp details.',
     price: 1250,
     originalPrice: 1500,
     category: 'business-cards',
@@ -102,61 +93,31 @@ const allProducts: Product[] = [
       finish: 'Matte / Gloss / Silk',
       packaging: 'Box of 100 cards',
     },
-    variants: [
-      { id: '1a', name: 'Standard', price: 1250 },
-      { id: '1b', name: 'Premium', price: 1850 },
-    ],
     options: {
       sizes: ['Standard (90 x 55 mm)', 'Square (55 x 55 mm)', 'Mini (70 x 28 mm)'],
-      materials: ['350 GSM Art Card', '400 GSM Art Card', '450 GSM Art Card'],
+      thicknesses: ['300 GSM', '600 GSM'],
       orientations: ['Horizontal', 'Vertical'],
-      finishes: ['Matte', 'Gloss', 'Silk'],
-      addons: [
-        { id: 'spot-uv', name: 'Spot UV', price: 250 },
-        { id: 'embossing', name: 'Embossing', price: 350 },
-        { id: 'foil-stamping', name: 'Foil Stamping', price: 450 },
-      ],
+      treatments: ['None', 'Spot UV (Single Side)', 'Spot UV (Both Sides)'],
+      quantities: [100, 250, 500, 750, 1000, 2000, 5000, 10000],
     },
     featured: true,
     relatedProducts: ['2', '3', '5'],
-    reviews: [
-      {
-        id: 'r1',
-        user: 'Rahul Sharma',
-        rating: 5,
-        date: '2023-05-15',
-        content: 'Excellent quality business cards. The print quality is outstanding and the card stock feels premium. Highly recommended!',
-      },
-      {
-        id: 'r2',
-        user: 'Priya Patel',
-        rating: 4,
-        date: '2023-04-20',
-        content: 'Very good cards. The colors came out perfectly and the cards arrived well before the expected delivery date.',
-      },
-      {
-        id: 'r3',
-        user: 'Amit Singh',
-        rating: 5,
-        date: '2023-03-08',
-        content: 'These cards have helped me make a great impression with clients. The embossing option adds a touch of luxury.',
-      },
-    ],
   },
   {
     id: '2',
-    name: 'Luxury Wedding Cards',
-    description: 'Elegant wedding invitations with premium finishes',
+    name: 'Luxury Foiling Business Cards',
+    description: 'Elegant business cards with premium foiling finishes',
     price: 1825,
-    category: 'wedding-cards',
-    tags: ['wedding', 'luxury', 'cards'],
+    category: 'business-cards',
+    tags: ['luxury', 'foiling', 'cards'],
     image: '/placeholder.svg',
-    rating: 4.9,
-    reviewsCount: 256,
-    variants: [
-      { id: '2a', name: 'Standard', price: 1825 },
-      { id: '2b', name: 'Gold Foil', price: 2450 },
-    ],
+    options: {
+      sizes: ['Standard (90 x 55 mm)', 'Square (55 x 55 mm)'],
+      thicknesses: ['300 GSM', '600 GSM'],
+      orientations: ['Horizontal', 'Vertical'],
+      treatments: ['None', 'Gold Foiling (Single Side)', 'Gold Foiling (Both Sides)', 'Silver Foiling (Single Side)', 'Silver Foiling (Both Sides)'],
+      quantities: [100, 250, 500, 750, 1000, 2000, 5000],
+    },
     featured: true,
     relatedProducts: ['1', '5'],
   },
@@ -168,12 +129,13 @@ const allProducts: Product[] = [
     category: 'stationery',
     tags: ['letterhead', 'stationery', 'business'],
     image: '/placeholder.svg',
-    rating: 4.7,
-    reviewsCount: 89,
-    variants: [
-      { id: '3a', name: 'Basic', price: 950 },
-      { id: '3b', name: 'Premium', price: 1450 },
-    ],
+    options: {
+      sizes: ['A4 (210 x 297 mm)', 'US Letter (216 x 279 mm)'],
+      thicknesses: ['100 GSM', '120 GSM'],
+      orientations: ['Portrait', 'Landscape'],
+      treatments: ['None', 'Watermark', 'Embossing'],
+      quantities: [100, 250, 500, 1000, 2000],
+    },
     featured: false,
     relatedProducts: ['1', '4'],
   },
@@ -185,13 +147,12 @@ const allProducts: Product[] = [
     category: 'carry-bags',
     tags: ['bags', 'retail', 'eco-friendly'],
     image: '/placeholder.svg',
-    rating: 4.5,
-    reviewsCount: 65,
-    variants: [
-      { id: '4a', name: 'Small', price: 750 },
-      { id: '4b', name: 'Medium', price: 950 },
-      { id: '4c', name: 'Large', price: 1150 },
-    ],
+    options: {
+      sizes: ['Small (20 x 25 cm)', 'Medium (30 x 40 cm)', 'Large (40 x 50 cm)'],
+      thicknesses: ['150 GSM', '200 GSM'],
+      treatments: ['None', 'Gloss Lamination', 'Matte Lamination'],
+      quantities: [100, 250, 500, 1000, 2000],
+    },
     featured: false,
     relatedProducts: ['3', '5'],
   },
@@ -203,12 +164,12 @@ const allProducts: Product[] = [
     category: 'boxes',
     tags: ['boxes', 'packaging', 'branded'],
     image: '/placeholder.svg',
-    rating: 4.6,
-    reviewsCount: 42,
-    variants: [
-      { id: '5a', name: 'Small', price: 1550 },
-      { id: '5b', name: 'Medium', price: 1950 },
-    ],
+    options: {
+      sizes: ['Small (10 x 10 x 5 cm)', 'Medium (15 x 15 x 10 cm)', 'Large (20 x 20 x 15 cm)'],
+      thicknesses: ['300 GSM', '350 GSM'],
+      treatments: ['None', 'Spot UV', 'Foil Stamping'],
+      quantities: [100, 250, 500, 1000],
+    },
     featured: true,
     relatedProducts: ['1', '4', '2'],
   },
@@ -219,32 +180,33 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { addToCart } = useCart();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Find the product based on the ID from the URL
   const product = allProducts.find(p => p.id === id);
   
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState<number>(100);
   const [activeImage, setActiveImage] = useState(0);
-  const [selectedVariant, setSelectedVariant] = useState('');
   const [selectedOptions, setSelectedOptions] = useState({
     size: '',
-    material: '',
+    thickness: '',
     orientation: 'Horizontal' as 'Horizontal' | 'Vertical',
-    finish: '',
+    treatment: '',
   });
-  const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>({});
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState('');
 
   // Set initial values when product loads
   React.useEffect(() => {
     if (product) {
       setSelectedOptions({
         size: product.options?.sizes?.[0] || '',
-        material: product.options?.materials?.[0] || '',
+        thickness: product.options?.thicknesses?.[0] || '',
         orientation: (product.options?.orientations?.[0] as 'Horizontal' | 'Vertical') || 'Horizontal',
-        finish: product.options?.finishes?.[0] || '',
+        treatment: product.options?.treatments?.[0] || '',
       });
-      if (product.variants && product.variants.length > 0) {
-        setSelectedVariant(product.variants[0].id);
+      if (product.options?.quantities && product.options.quantities.length > 0) {
+        setQuantity(product.options.quantities[0]);
       }
     }
   }, [product]);
@@ -264,35 +226,105 @@ const ProductDetail = () => {
     ? product.relatedProducts.map(id => allProducts.find(p => p.id === id)).filter(Boolean) as Product[]
     : [];
 
-  const totalPrice = () => {
+  const calculatePrice = () => {
     let price = product.price;
     
-    // Add addon prices
-    if (product.options?.addons) {
-      product.options.addons.forEach(addon => {
-        if (selectedAddons[addon.id]) {
-          price += addon.price;
-        }
-      });
+    // Adjust price based on quantity
+    if (quantity > 100) {
+      if (quantity <= 500) {
+        price = price * 1.2; // 20% increase for 250-500
+      } else if (quantity <= 1000) {
+        price = price * 1.5; // 50% increase for 750-1000
+      } else if (quantity <= 5000) {
+        price = price * 2.2; // 120% increase for 2000-5000
+      } else {
+        price = price * 3; // 200% increase for 10000
+      }
     }
     
-    return price * quantity;
+    // Add premium for 600 GSM
+    if (selectedOptions.thickness === '600 GSM') {
+      price = price * 1.3; // 30% premium for thicker paper
+    }
+    
+    // Add price for treatments
+    if (selectedOptions.treatment && selectedOptions.treatment !== 'None') {
+      if (selectedOptions.treatment.includes('Both Sides')) {
+        price = price * 1.4; // 40% premium for both sides treatment
+      } else if (selectedOptions.treatment.includes('Single Side')) {
+        price = price * 1.25; // 25% premium for single side treatment
+      }
+    }
+    
+    return price;
+  };
+
+  const totalPrice = () => {
+    return calculatePrice();
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    setFileError('');
+    
+    if (files && files.length > 0) {
+      const file = files[0];
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      
+      // Check file type
+      if (fileExtension === 'pdf' || fileExtension === 'cdr' || fileExtension === 'ai') {
+        // Check file size (max 10MB)
+        if (file.size <= 10 * 1024 * 1024) {
+          setUploadedFile(file);
+        } else {
+          setFileError('File size exceeds 10MB limit');
+        }
+      } else {
+        setFileError('Please upload a PDF, CDR, or AI file');
+      }
+    }
+  };
+
+  const handleTriggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const getFileIcon = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    
+    switch (extension) {
+      case 'pdf':
+        return <FilePdf className="h-5 w-5 text-red-500" />;
+      case 'ai':
+        return <FileAi className="h-5 w-5 text-amber-500" />;
+      case 'cdr':
+        return <FileImage className="h-5 w-5 text-blue-500" />;
+      default:
+        return <FileImage className="h-5 w-5" />;
+    }
   };
 
   const handleAddToCart = () => {
+    if (!uploadedFile) {
+      setFileError('Please upload your design file');
+      return;
+    }
+
     addToCart({
       productId: product.id,
       name: product.name,
-      price: product.price,
+      price: totalPrice(),
       image: product.image,
-      quantity: quantity,
+      quantity: 1, // This is 1 order, not the quantity of items
       customization: {
         size: selectedOptions.size,
         orientation: selectedOptions.orientation,
-        material: selectedOptions.material,
-        addons: Object.entries(selectedAddons)
-          .filter(([_, selected]) => selected)
-          .map(([id]) => id),
+        material: selectedOptions.thickness,
+        addons: [selectedOptions.treatment],
+        quantity: quantity,
+        designFile: uploadedFile.name,
       },
     });
     
@@ -351,23 +383,23 @@ const ProductDetail = () => {
         {/* Product info */}
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold">{product.name}</h1>
+            <h1 className="text-3xl font-bold mb-3">{product.name}</h1>
             
-            <div className="flex items-baseline mt-4">
-              <div className="flex items-center">
-                <BadgeIndianRupee className="h-5 w-5 mr-1" />
-                <span className="text-2xl font-bold">{product.price.toFixed(2)}</span>
-              </div>
+            <div className="flex items-baseline mb-4">
+              <span className="flex items-center text-2xl font-bold">
+                <Rupee className="h-5 w-5 mr-1" />
+                <span>{totalPrice().toFixed(2)}</span>
+              </span>
               
               {product.originalPrice && (
                 <div className="flex items-center ml-3 text-muted-foreground line-through">
-                  <BadgeIndianRupee className="h-3 w-3 mr-1" />
+                  <Rupee className="h-3 w-3 mr-1" />
                   <span>{product.originalPrice.toFixed(2)}</span>
                 </div>
               )}
             </div>
             
-            <p className="mt-4 text-muted-foreground">
+            <p className="text-muted-foreground mb-6">
               {product.description}
             </p>
             
@@ -375,31 +407,6 @@ const ProductDetail = () => {
             
             {/* Product Options */}
             <div className="space-y-6">
-              {/* Variants */}
-              {product.variants && product.variants.length > 1 && (
-                <div>
-                  <Label htmlFor="variant" className="block mb-2 font-medium">Variant</Label>
-                  <RadioGroup
-                    value={selectedVariant || product.variants[0].id}
-                    onValueChange={setSelectedVariant}
-                    className="grid grid-cols-2 gap-2"
-                  >
-                    {product.variants.map((variant) => (
-                      <div key={variant.id} className="flex items-center space-x-2">
-                        <RadioGroupItem value={variant.id} id={variant.id} />
-                        <Label htmlFor={variant.id} className="flex justify-between w-full">
-                          <span>{variant.name}</span>
-                          <div className="flex items-center">
-                            <BadgeIndianRupee className="h-3 w-3 mr-1" />
-                            <span>{variant.price.toFixed(2)}</span>
-                          </div>
-                        </Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
-                </div>
-              )}
-              
               {/* Size */}
               {product.options?.sizes && (
                 <div>
@@ -420,20 +427,20 @@ const ProductDetail = () => {
                 </div>
               )}
               
-              {/* Material */}
-              {product.options?.materials && (
+              {/* Paper Thickness */}
+              {product.options?.thicknesses && (
                 <div>
-                  <Label htmlFor="material" className="block mb-2 font-medium">Material</Label>
+                  <Label htmlFor="thickness" className="block mb-2 font-medium">Paper Thickness</Label>
                   <Select
-                    defaultValue={selectedOptions.material}
-                    onValueChange={(value) => setSelectedOptions({...selectedOptions, material: value})}
+                    defaultValue={selectedOptions.thickness}
+                    onValueChange={(value) => setSelectedOptions({...selectedOptions, thickness: value})}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select material" />
+                      <SelectValue placeholder="Select thickness" />
                     </SelectTrigger>
                     <SelectContent>
-                      {product.options.materials.map((material) => (
-                        <SelectItem key={material} value={material}>{material}</SelectItem>
+                      {product.options.thicknesses.map((thickness) => (
+                        <SelectItem key={thickness} value={thickness}>{thickness}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -459,68 +466,103 @@ const ProductDetail = () => {
                 </div>
               )}
               
-              {/* Addons */}
-              {product.options?.addons && (
+              {/* Treatment (Spot UV or Foiling) */}
+              {product.options?.treatments && (
                 <div>
-                  <Label className="block mb-2 font-medium">Addons</Label>
-                  <div className="grid grid-cols-1 gap-2">
-                    {product.options.addons.map((addon) => (
-                      <div key={addon.id} className="flex items-center space-x-2 rounded-md border p-3 hover:bg-muted/50 transition-colors">
-                        <Checkbox
-                          id={addon.id}
-                          checked={selectedAddons[addon.id] || false}
-                          onCheckedChange={(checked) => 
-                            setSelectedAddons({...selectedAddons, [addon.id]: !!checked})
-                          }
-                        />
-                        <div className="flex flex-1 items-center justify-between">
-                          <Label htmlFor={addon.id} className="flex-1">
-                            {addon.name}
-                          </Label>
-                          <div className="flex items-center">
-                            <BadgeIndianRupee className="h-3 w-3 mr-1" />
-                            <span>{addon.price.toFixed(2)}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <Label htmlFor="treatment" className="block mb-2 font-medium">Treatment</Label>
+                  <Select
+                    defaultValue={selectedOptions.treatment}
+                    onValueChange={(value) => setSelectedOptions({...selectedOptions, treatment: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select treatment" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {product.options.treatments.map((treatment) => (
+                        <SelectItem key={treatment} value={treatment}>{treatment}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
               
               {/* Quantity */}
+              {product.options?.quantities && (
+                <div>
+                  <Label htmlFor="quantity" className="block mb-2 font-medium">Quantity</Label>
+                  <Select
+                    defaultValue={quantity.toString()}
+                    onValueChange={(value) => setQuantity(parseInt(value))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select quantity" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {product.options.quantities.map((qty) => (
+                        <SelectItem key={qty} value={qty.toString()}>{qty}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              
+              {/* File Upload */}
               <div>
-                <Label htmlFor="quantity" className="block mb-2 font-medium">Quantity</Label>
-                <div className="flex items-center">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="h-10 w-10"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <div className="w-16 text-center">{quantity}</div>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="h-10 w-10"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                <Label className="block mb-2 font-medium">Upload Design File</Label>
+                <div className="mt-1 space-y-2">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept=".pdf,.cdr,.ai"
+                    onChange={handleFileUpload}
+                  />
+                  
+                  {uploadedFile ? (
+                    <div className="flex items-center p-3 bg-muted rounded-md">
+                      {getFileIcon(uploadedFile.name)}
+                      <span className="ml-2 flex-1 truncate">{uploadedFile.name}</span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={handleTriggerFileInput}
+                      >
+                        Change
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full py-8 flex flex-col items-center justify-center border-dashed"
+                      onClick={handleTriggerFileInput}
+                    >
+                      <UploadCloud className="h-8 w-8 mb-2 text-muted-foreground" />
+                      <span className="text-sm font-medium">Upload PDF, CDR, or AI file</span>
+                      <span className="text-xs text-muted-foreground mt-1">Max file size: 10MB</span>
+                    </Button>
+                  )}
+                  
+                  {fileError && (
+                    <p className="text-sm text-destructive mt-1">{fileError}</p>
+                  )}
+                  
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline" className="flex items-center gap-1">
+                      <FilePdf className="h-3 w-3" /> PDF
+                    </Badge>
+                    <Badge variant="outline" className="flex items-center gap-1">
+                      <FileAi className="h-3 w-3" /> AI
+                    </Badge>
+                    <Badge variant="outline" className="flex items-center gap-1">
+                      <FileImage className="h-3 w-3" /> CDR
+                    </Badge>
+                  </div>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center space-x-4 mt-8">
-              <div className="flex items-center">
-                <BadgeIndianRupee className="h-5 w-5 mr-1" />
-                <span className="text-2xl font-bold">{totalPrice().toFixed(2)}</span>
-              </div>
-            </div>
-            
-            <div className="mt-4">
+            <div className="mt-8">
               <Button 
                 className="w-full py-6"
                 onClick={handleAddToCart}
@@ -555,41 +597,6 @@ const ProductDetail = () => {
         </div>
       </div>
       
-      {/* Product details tabs */}
-      <Tabs defaultValue="description" className="mb-16">
-        <TabsList className="mb-6 w-full sm:w-auto">
-          <TabsTrigger value="description" className="flex-1">Description</TabsTrigger>
-          <TabsTrigger value="specifications" className="flex-1">Specifications</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="description" className="text-muted-foreground">
-          <Card>
-            <CardContent className="p-6">
-              <p>{product.longDescription || product.description}</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="specifications">
-          <Card>
-            <CardContent className="p-6">
-              {product.specs ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {Object.entries(product.specs).map(([key, value]) => (
-                    <div key={key} className="border-b pb-2">
-                      <span className="font-medium capitalize">{key}: </span>
-                      <span className="text-muted-foreground">{value}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-muted-foreground">No specifications available for this product.</p>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-      
       {/* Related products */}
       {relatedProducts.length > 0 && (
         <div className="mb-16">
@@ -609,7 +616,7 @@ const ProductDetail = () => {
                     <h3 className="font-medium line-clamp-1">{relatedProduct.name}</h3>
                     <div className="flex items-center mt-2">
                       <div className="flex items-center">
-                        <BadgeIndianRupee className="h-4 w-4 mr-1" />
+                        <Rupee className="h-4 w-4 mr-1" />
                         <span className="font-semibold">{relatedProduct.price.toFixed(2)}</span>
                       </div>
                     </div>
