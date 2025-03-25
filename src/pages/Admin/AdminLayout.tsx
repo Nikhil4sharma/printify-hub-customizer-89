@@ -11,20 +11,17 @@ import {
   LogOut, 
   Menu, 
   X, 
-  Grid2x2, 
-  MoonIcon,
-  SunIcon 
+  Grid2x2
 } from 'lucide-react';
 import { useAdminAuth } from '@/context/AdminAuthContext';
 import { cn } from '@/lib/utils';
-import { useTheme } from '@/context/ThemeContext';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 const AdminLayout = () => {
   const { admin, logout } = useAdminAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { theme, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     logout();
@@ -116,14 +113,7 @@ const AdminLayout = () => {
           </Button>
           
           <div className="ml-auto flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={toggleTheme} 
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
-            </Button>
+            <ThemeToggle variant="icon" />
           </div>
         </header>
 

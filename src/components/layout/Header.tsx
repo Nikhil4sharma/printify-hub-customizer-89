@@ -1,13 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
-import { Sun, Moon, ShoppingCart, User, Menu, X } from 'lucide-react';
+import { ShoppingCart, User, Menu, X } from 'lucide-react';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 const Header: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
   const { isAuthenticated, logout } = useAuth();
   const { totalItems } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -55,17 +54,7 @@ const Header: React.FC = () => {
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center space-x-4">
           {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-secondary transition-colors"
-            aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-          >
-            {theme === 'light' ? (
-              <Moon size={20} className="text-foreground" />
-            ) : (
-              <Sun size={20} className="text-foreground" />
-            )}
-          </button>
+          <ThemeToggle variant="icon" />
 
           {/* Cart */}
           <Link
@@ -138,26 +127,7 @@ const Header: React.FC = () => {
           </nav>
           
           <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
-            <button
-              onClick={() => {
-                toggleTheme();
-                toggleMobileMenu();
-              }}
-              className="p-2 rounded-full hover:bg-secondary transition-colors flex items-center"
-              aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-            >
-              {theme === 'light' ? (
-                <>
-                  <Moon size={20} className="mr-2" />
-                  <span>Dark Mode</span>
-                </>
-              ) : (
-                <>
-                  <Sun size={20} className="mr-2" />
-                  <span>Light Mode</span>
-                </>
-              )}
-            </button>
+            <ThemeToggle variant="switch" onClick={toggleMobileMenu} />
             
             {isAuthenticated ? (
               <button 
