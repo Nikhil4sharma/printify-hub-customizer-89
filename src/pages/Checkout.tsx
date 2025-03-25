@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -51,7 +50,6 @@ const CheckoutPage = () => {
       toast({
         title: "Order placed successfully!",
         description: "Your order has been placed successfully. Thank you for shopping with us!",
-        variant: "success",
       });
       
       // Redirect to order success page

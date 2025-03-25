@@ -70,30 +70,30 @@ const CartPage = () => {
           initial="hidden"
           animate="show"
         >
-          {items.map((item) => (
-            <motion.div key={item.id} variants={item} className="mb-4">
+          {items.map((cartItem) => (
+            <motion.div key={cartItem.id} variants={item} className="mb-4">
               <Card>
                 <CardContent className="p-4">
                   <div className="flex flex-col sm:flex-row gap-4">
                     <div className="w-full sm:w-24 h-24 bg-muted rounded-md overflow-hidden flex-shrink-0">
                       <img
-                        src={item.image}
-                        alt={item.name}
+                        src={cartItem.image}
+                        alt={cartItem.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <div className="flex-1">
                       <div className="flex flex-col sm:flex-row sm:justify-between">
                         <div>
-                          <h3 className="font-medium text-lg">{item.name}</h3>
+                          <h3 className="font-medium text-lg">{cartItem.name}</h3>
                           <div className="text-sm text-muted-foreground mt-1">
-                            <p>Size: {item.customization.size}</p>
-                            <p>Material: {item.customization.material}</p>
+                            <p>Size: {cartItem.customization.size}</p>
+                            <p>Material: {cartItem.customization.material}</p>
                           </div>
                         </div>
                         <div className="flex items-center mt-2 sm:mt-0">
                           <BadgeIndianRupee className="h-4 w-4 mr-1" />
-                          <span className="font-semibold">{item.price.toFixed(2)}</span>
+                          <span className="font-semibold">{cartItem.price.toFixed(2)}</span>
                         </div>
                       </div>
                       
@@ -102,16 +102,16 @@ const CartPage = () => {
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                            onClick={() => updateQuantity(cartItem.id, Math.max(1, cartItem.quantity - 1))}
                             className="h-8 w-8"
                           >
                             <MinusCircle className="h-4 w-4" />
                           </Button>
-                          <span className="w-10 text-center">{item.quantity}</span>
+                          <span className="w-10 text-center">{cartItem.quantity}</span>
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(cartItem.id, cartItem.quantity + 1)}
                             className="h-8 w-8"
                           >
                             <PlusCircle className="h-4 w-4" />
@@ -120,7 +120,7 @@ const CartPage = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCart(cartItem.id)}
                           className="text-red-500 hover:text-red-700 hover:bg-red-100"
                         >
                           <Trash2 className="h-4 w-4 mr-2" />

@@ -31,8 +31,68 @@ import {
   Star,
 } from 'lucide-react';
 
+interface Review {
+  id: string;
+  user: string;
+  rating: number;
+  date: string;
+  content: string;
+}
+
+interface ProductSpec {
+  dimensions?: string;
+  material?: string;
+  printing?: string;
+  finish?: string;
+  packaging?: string;
+  [key: string]: string | undefined;
+}
+
+interface ProductVariant {
+  id: string;
+  name: string;
+  price: number;
+  inStock: boolean;
+}
+
+interface ProductAddon {
+  id: string;
+  name: string;
+  price: number;
+}
+
+interface ProductOptions {
+  sizes?: string[];
+  materials?: string[];
+  orientations?: string[];
+  finishes?: string[];
+  addons?: ProductAddon[];
+}
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  longDescription?: string;
+  price: number;
+  originalPrice?: number;
+  category: string;
+  tags: string[];
+  image: string;
+  gallery?: string[];
+  rating: number;
+  reviewsCount: number;
+  specs?: ProductSpec;
+  variants?: ProductVariant[];
+  options?: ProductOptions;
+  featured: boolean;
+  inStock: boolean;
+  relatedProducts?: string[];
+  reviews?: Review[];
+}
+
 // Mock product data - in a real app, this would come from an API
-const allProducts = [
+const allProducts: Product[] = [
   {
     id: '1',
     name: 'Premium Business Cards',
@@ -45,7 +105,7 @@ const allProducts = [
     image: '/placeholder.svg',
     gallery: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
     rating: 4.8,
-    reviews: 128,
+    reviewsCount: 128,
     specs: {
       dimensions: '90 x 55 mm (Standard)',
       material: '350 GSM Art Card',
@@ -104,7 +164,7 @@ const allProducts = [
     tags: ['wedding', 'luxury', 'cards'],
     image: '/placeholder.svg',
     rating: 4.9,
-    reviews: 256,
+    reviewsCount: 256,
     variants: [
       { id: '2a', name: 'Standard', price: 1825, inStock: true },
       { id: '2b', name: 'Gold Foil', price: 2450, inStock: true },
@@ -122,7 +182,7 @@ const allProducts = [
     tags: ['letterhead', 'stationery', 'business'],
     image: '/placeholder.svg',
     rating: 4.7,
-    reviews: 89,
+    reviewsCount: 89,
     variants: [
       { id: '3a', name: 'Basic', price: 950, inStock: true },
       { id: '3b', name: 'Premium', price: 1450, inStock: true },
@@ -140,7 +200,7 @@ const allProducts = [
     tags: ['bags', 'retail', 'eco-friendly'],
     image: '/placeholder.svg',
     rating: 4.5,
-    reviews: 65,
+    reviewsCount: 65,
     variants: [
       { id: '4a', name: 'Small', price: 750, inStock: true },
       { id: '4b', name: 'Medium', price: 950, inStock: true },
@@ -159,7 +219,7 @@ const allProducts = [
     tags: ['boxes', 'packaging', 'branded'],
     image: '/placeholder.svg',
     rating: 4.6,
-    reviews: 42,
+    reviewsCount: 42,
     variants: [
       { id: '5a', name: 'Small', price: 1550, inStock: true },
       { id: '5b', name: 'Medium', price: 1950, inStock: true },
@@ -183,12 +243,27 @@ const ProductDetail = () => {
   const [activeImage, setActiveImage] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState('');
   const [selectedOptions, setSelectedOptions] = useState({
-    size: product?.options?.sizes ? product.options.sizes[0] : '',
-    material: product?.options?.materials ? product.options.materials[0] : '',
-    orientation: product?.options?.orientations ? product.options.orientations[0] : 'Horizontal',
-    finish: product?.options?.finishes ? product.options.finishes[0] : '',
+    size: '',
+    material: '',
+    orientation: 'Horizontal' as 'Horizontal' | 'Vertical',
+    finish: '',
   });
   const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>({});
+
+  // Set initial values when product loads
+  React.useEffect(() => {
+    if (product) {
+      setSelectedOptions({
+        size: product.options?.sizes?.[0] || '',
+        material: product.options?.materials?.[0] || '',
+        orientation: product.options?.orientations?.[0] as 'Horizontal' | 'Vertical' || 'Horizontal',
+        finish: product.options?.finishes?.[0] || '',
+      });
+      if (product.variants && product.variants.length > 0) {
+        setSelectedVariant(product.variants[0].id);
+      }
+    }
+  }, [product]);
   
   if (!product) {
     return (
@@ -202,7 +277,7 @@ const ProductDetail = () => {
 
   // Find related products
   const relatedProducts = product.relatedProducts
-    ? product.relatedProducts.map(id => allProducts.find(p => p.id === id)).filter(Boolean)
+    ? product.relatedProducts.map(id => allProducts.find(p => p.id === id)).filter(Boolean) as Product[]
     : [];
 
   const totalPrice = () => {
@@ -229,7 +304,7 @@ const ProductDetail = () => {
       quantity: quantity,
       customization: {
         size: selectedOptions.size,
-        orientation: selectedOptions.orientation as 'Horizontal' | 'Vertical',
+        orientation: selectedOptions.orientation,
         material: selectedOptions.material,
         addons: Object.entries(selectedAddons)
           .filter(([_, selected]) => selected)
@@ -308,7 +383,7 @@ const ProductDetail = () => {
                   />
                 ))}
                 <span className="ml-2 text-sm text-muted-foreground">
-                  {product.rating} ({product.reviews} reviews)
+                  {product.rating} ({product.reviewsCount} reviews)
                 </span>
               </div>
               
@@ -417,7 +492,7 @@ const ProductDetail = () => {
                   <Label htmlFor="orientation" className="block mb-2">Orientation</Label>
                   <RadioGroup
                     defaultValue={selectedOptions.orientation}
-                    onValueChange={(value) => setSelectedOptions({...selectedOptions, orientation: value})}
+                    onValueChange={(value: 'Horizontal' | 'Vertical') => setSelectedOptions({...selectedOptions, orientation: value})}
                     className="grid grid-cols-2 gap-2"
                   >
                     {product.options.orientations.map((orientation) => (
@@ -632,37 +707,35 @@ const ProductDetail = () => {
           <h2 className="text-2xl font-bold mb-6">Related Products</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedProducts.map((relatedProduct) => (
-              relatedProduct && (
-                <Link key={relatedProduct.id} to={`/products/${relatedProduct.category}/${relatedProduct.id}`}>
-                  <Card className="h-full transition-all hover:shadow-md">
-                    <div className="relative h-48 bg-muted">
-                      <img
-                        src={relatedProduct.image}
-                        alt={relatedProduct.name}
-                        className="w-full h-full object-cover"
-                      />
-                      {!relatedProduct.inStock && (
-                        <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
-                          Out of Stock
-                        </Badge>
-                      )}
-                    </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-medium line-clamp-1">{relatedProduct.name}</h3>
-                      <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center">
-                          <BadgeIndianRupee className="h-4 w-4 mr-1" />
-                          <span className="font-semibold">{relatedProduct.price.toFixed(2)}</span>
-                        </div>
-                        <div className="text-sm text-yellow-500 flex items-center">
-                          <Star className="h-3 w-3 fill-yellow-500 mr-1" />
-                          <span>{relatedProduct.rating}</span>
-                        </div>
+              <Link key={relatedProduct.id} to={`/products/${relatedProduct.category}/${relatedProduct.id}`}>
+                <Card className="h-full transition-all hover:shadow-md">
+                  <div className="relative h-48 bg-muted">
+                    <img
+                      src={relatedProduct.image}
+                      alt={relatedProduct.name}
+                      className="w-full h-full object-cover"
+                    />
+                    {!relatedProduct.inStock && (
+                      <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
+                        Out of Stock
+                      </Badge>
+                    )}
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-medium line-clamp-1">{relatedProduct.name}</h3>
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="flex items-center">
+                        <BadgeIndianRupee className="h-4 w-4 mr-1" />
+                        <span className="font-semibold">{relatedProduct.price.toFixed(2)}</span>
                       </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              )
+                      <div className="text-sm text-yellow-500 flex items-center">
+                        <Star className="h-3 w-3 fill-yellow-500 mr-1" />
+                        <span>{relatedProduct.rating}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>
