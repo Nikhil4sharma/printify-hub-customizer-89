@@ -26,6 +26,10 @@ const Header: React.FC = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -120,20 +124,23 @@ const Header: React.FC = () => {
       >
         <div className="container-custom py-20 flex flex-col h-full">
           <nav className="flex flex-col space-y-8 text-lg">
-            <Link to="/products/business-cards" className="nav-link" onClick={toggleMobileMenu}>Business Cards</Link>
-            <Link to="/products/stationery" className="nav-link" onClick={toggleMobileMenu}>Stationery</Link>
-            <Link to="/products/bags" className="nav-link" onClick={toggleMobileMenu}>Carry Bags</Link>
-            <Link to="/products/boxes" className="nav-link" onClick={toggleMobileMenu}>Boxes</Link>
+            <Link to="/products/business-cards" className="nav-link" onClick={closeMobileMenu}>Business Cards</Link>
+            <Link to="/products/stationery" className="nav-link" onClick={closeMobileMenu}>Stationery</Link>
+            <Link to="/products/bags" className="nav-link" onClick={closeMobileMenu}>Carry Bags</Link>
+            <Link to="/products/boxes" className="nav-link" onClick={closeMobileMenu}>Boxes</Link>
           </nav>
           
           <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
-            <ThemeToggle variant="switch" onClick={toggleMobileMenu} />
+            {/* Updated: Use a component with onClick callback */}
+            <div onClick={closeMobileMenu}>
+              <ThemeToggle variant="switch" />
+            </div>
             
             {isAuthenticated ? (
               <button 
                 onClick={() => {
                   logout();
-                  toggleMobileMenu();
+                  closeMobileMenu();
                 }}
                 className="p-2 text-primary"
               >
@@ -143,7 +150,7 @@ const Header: React.FC = () => {
               <Link 
                 to="/login" 
                 className="p-2 text-primary"
-                onClick={toggleMobileMenu}
+                onClick={closeMobileMenu}
               >
                 Sign In
               </Link>
