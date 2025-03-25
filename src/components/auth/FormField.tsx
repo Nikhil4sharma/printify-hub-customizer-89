@@ -14,6 +14,7 @@ interface FormFieldProps {
   icon?: LucideIcon;
   required?: boolean;
   autoComplete?: string;
+  error?: string;
 }
 
 const FormField = ({
@@ -26,11 +27,13 @@ const FormField = ({
   icon: Icon,
   required = true,
   autoComplete,
+  error,
 }: FormFieldProps) => {
   return (
     <div className="space-y-2">
-      <Label htmlFor={id} className="text-sm font-medium">
+      <Label htmlFor={id} className="text-sm font-medium flex items-center">
         {label}
+        {required && <span className="text-red-500 ml-1">*</span>}
       </Label>
       <div className="relative">
         {Icon && (
@@ -45,10 +48,11 @@ const FormField = ({
           onChange={onChange}
           placeholder={placeholder}
           required={required}
-          className={Icon ? "pl-10" : ""}
+          className={`${Icon ? "pl-10" : ""} ${error ? "border-red-500 focus-visible:ring-red-500" : ""}`}
           autoComplete={autoComplete}
         />
       </div>
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   );
 };

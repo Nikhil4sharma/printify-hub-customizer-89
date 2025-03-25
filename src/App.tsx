@@ -23,6 +23,13 @@ import AdminLogin from "./pages/Admin/Login";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import ProfilePage from "./pages/Account/Profile";
+import OrdersPage from "./pages/Account/Orders";
+import ProductsListing from "./pages/Products/ProductsListing";
+import ProductDetail from "./pages/Products/ProductDetail";
+import Contact from "./pages/Contact";
 
 // Create a new QueryClient instance outside the component
 const queryClient = new QueryClient();
@@ -32,6 +39,13 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   // In a real app, this would check for admin authentication
   const isAdmin = localStorage.getItem('adminAuth') === 'true';
   return isAdmin ? <>{children}</> : <Navigate to="/admin/login" />;
+};
+
+// Auth route guard component
+const AuthRoute = ({ children }: { children: React.ReactNode }) => {
+  // In a real app, this would check for user authentication
+  const isAuth = localStorage.getItem('user') !== null;
+  return isAuth ? <>{children}</> : <Navigate to="/login" />;
 };
 
 const App = () => (
@@ -48,20 +62,28 @@ const App = () => (
                   <Routes>
                     {/* Customer facing routes */}
                     <Route path="/" element={<Index />} />
-                    <Route path="/products/:category" element={<div>Product Listing Page</div>} />
-                    <Route path="/products/:category/:id" element={<div>Product Detail Page</div>} />
+                    <Route path="/products/:category" element={<ProductsListing />} />
+                    <Route path="/products/:category/:id" element={<ProductDetail />} />
                     
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     
-                    <Route path="/cart" element={<div>Cart Page</div>} />
-                    <Route path="/checkout" element={<div>Checkout Page</div>} />
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/checkout" element={<Checkout />} />
                     
-                    <Route path="/account/profile" element={<div>Profile Page</div>} />
-                    <Route path="/account/orders" element={<div>Orders Page</div>} />
+                    <Route path="/account/profile" element={
+                      <AuthRoute>
+                        <ProfilePage />
+                      </AuthRoute>
+                    } />
+                    <Route path="/account/orders" element={
+                      <AuthRoute>
+                        <OrdersPage />
+                      </AuthRoute>
+                    } />
                     
-                    <Route path="/contact" element={<div>Contact Page</div>} />
+                    <Route path="/contact" element={<Contact />} />
                     
                     {/* Admin routes */}
                     <Route path="/admin/login" element={<AdminLogin />} />

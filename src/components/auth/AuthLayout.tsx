@@ -2,7 +2,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { MoonIcon, SunIcon } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { CreditCard, ShoppingBag } from "lucide-react";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -23,15 +24,24 @@ const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
         </Link>
       </div>
       
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
+      <div className="w-full max-w-md space-y-8 animate-fade-in">
+        <div className="flex flex-col items-center text-center">
+          <div className="bg-primary/10 p-3 rounded-full mb-4">
+            {title.includes("Login") || title.includes("Register") ? (
+              <ShoppingBag className="h-8 w-8 text-primary" />
+            ) : (
+              <CreditCard className="h-8 w-8 text-primary" />
+            )}
+          </div>
           <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
           <p className="mt-2 text-muted-foreground">{subtitle}</p>
         </div>
         
-        <div className="bg-card shadow-lg rounded-lg border border-border p-6">
-          {children}
-        </div>
+        <Card className="overflow-hidden border-border shadow-lg">
+          <div className="p-6">
+            {children}
+          </div>
+        </Card>
       </div>
     </div>
   );
