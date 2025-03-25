@@ -1,12 +1,9 @@
-
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -23,12 +20,10 @@ import {
   BadgeIndianRupee,
   Check,
   ChevronRight,
-  Heart,
   Minus,
   Plus,
-  Share2,
   ShoppingCart,
-  Star,
+  Share2,
 } from 'lucide-react';
 
 interface Review {
@@ -52,7 +47,6 @@ interface ProductVariant {
   id: string;
   name: string;
   price: number;
-  inStock: boolean;
 }
 
 interface ProductAddon {
@@ -80,13 +74,10 @@ interface Product {
   tags: string[];
   image: string;
   gallery?: string[];
-  rating: number;
-  reviewsCount: number;
   specs?: ProductSpec;
   variants?: ProductVariant[];
   options?: ProductOptions;
   featured: boolean;
-  inStock: boolean;
   relatedProducts?: string[];
   reviews?: Review[];
 }
@@ -104,8 +95,6 @@ const allProducts: Product[] = [
     tags: ['premium', 'business', 'cards'],
     image: '/placeholder.svg',
     gallery: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
-    rating: 4.8,
-    reviewsCount: 128,
     specs: {
       dimensions: '90 x 55 mm (Standard)',
       material: '350 GSM Art Card',
@@ -114,8 +103,8 @@ const allProducts: Product[] = [
       packaging: 'Box of 100 cards',
     },
     variants: [
-      { id: '1a', name: 'Standard', price: 1250, inStock: true },
-      { id: '1b', name: 'Premium', price: 1850, inStock: true },
+      { id: '1a', name: 'Standard', price: 1250 },
+      { id: '1b', name: 'Premium', price: 1850 },
     ],
     options: {
       sizes: ['Standard (90 x 55 mm)', 'Square (55 x 55 mm)', 'Mini (70 x 28 mm)'],
@@ -129,7 +118,6 @@ const allProducts: Product[] = [
       ],
     },
     featured: true,
-    inStock: true,
     relatedProducts: ['2', '3', '5'],
     reviews: [
       {
@@ -166,11 +154,10 @@ const allProducts: Product[] = [
     rating: 4.9,
     reviewsCount: 256,
     variants: [
-      { id: '2a', name: 'Standard', price: 1825, inStock: true },
-      { id: '2b', name: 'Gold Foil', price: 2450, inStock: true },
+      { id: '2a', name: 'Standard', price: 1825 },
+      { id: '2b', name: 'Gold Foil', price: 2450 },
     ],
     featured: true,
-    inStock: true,
     relatedProducts: ['1', '5'],
   },
   {
@@ -184,11 +171,10 @@ const allProducts: Product[] = [
     rating: 4.7,
     reviewsCount: 89,
     variants: [
-      { id: '3a', name: 'Basic', price: 950, inStock: true },
-      { id: '3b', name: 'Premium', price: 1450, inStock: true },
+      { id: '3a', name: 'Basic', price: 950 },
+      { id: '3b', name: 'Premium', price: 1450 },
     ],
     featured: false,
-    inStock: true,
     relatedProducts: ['1', '4'],
   },
   {
@@ -202,12 +188,11 @@ const allProducts: Product[] = [
     rating: 4.5,
     reviewsCount: 65,
     variants: [
-      { id: '4a', name: 'Small', price: 750, inStock: true },
-      { id: '4b', name: 'Medium', price: 950, inStock: true },
-      { id: '4c', name: 'Large', price: 1150, inStock: true },
+      { id: '4a', name: 'Small', price: 750 },
+      { id: '4b', name: 'Medium', price: 950 },
+      { id: '4c', name: 'Large', price: 1150 },
     ],
     featured: false,
-    inStock: true,
     relatedProducts: ['3', '5'],
   },
   {
@@ -221,11 +206,10 @@ const allProducts: Product[] = [
     rating: 4.6,
     reviewsCount: 42,
     variants: [
-      { id: '5a', name: 'Small', price: 1550, inStock: true },
-      { id: '5b', name: 'Medium', price: 1950, inStock: true },
+      { id: '5a', name: 'Small', price: 1550 },
+      { id: '5b', name: 'Medium', price: 1950 },
     ],
     featured: true,
-    inStock: true,
     relatedProducts: ['1', '4', '2'],
   },
 ];
@@ -256,7 +240,7 @@ const ProductDetail = () => {
       setSelectedOptions({
         size: product.options?.sizes?.[0] || '',
         material: product.options?.materials?.[0] || '',
-        orientation: product.options?.orientations?.[0] as 'Horizontal' | 'Vertical' || 'Horizontal',
+        orientation: (product.options?.orientations?.[0] as 'Horizontal' | 'Vertical') || 'Horizontal',
         finish: product.options?.finishes?.[0] || '',
       });
       if (product.variants && product.variants.length > 0) {
@@ -336,8 +320,8 @@ const ProductDetail = () => {
       {/* Product details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
         {/* Product images */}
-        <div className="space-y-4">
-          <div className="bg-muted rounded-lg overflow-hidden aspect-square">
+        <div className="space-y-6">
+          <div className="bg-muted rounded-lg overflow-hidden aspect-square shadow-md">
             <img
               src={product.gallery?.[activeImage] || product.image}
               alt={product.name}
@@ -346,11 +330,11 @@ const ProductDetail = () => {
           </div>
           
           {product.gallery && product.gallery.length > 1 && (
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-3">
               {product.gallery.map((image, index) => (
                 <div
                   key={index}
-                  className={`aspect-square bg-muted rounded overflow-hidden cursor-pointer border-2 ${index === activeImage ? 'border-primary' : 'border-transparent'}`}
+                  className={`aspect-square bg-muted rounded-md overflow-hidden cursor-pointer border-2 transition-all ${index === activeImage ? 'border-primary scale-105' : 'border-transparent hover:border-muted-foreground'}`}
                   onClick={() => setActiveImage(index)}
                 >
                   <img
@@ -367,32 +351,7 @@ const ProductDetail = () => {
         {/* Product info */}
         <div className="space-y-6">
           <div>
-            <div className="flex items-start justify-between">
-              <h1 className="text-3xl font-bold">{product.name}</h1>
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                <Heart className="h-5 w-5" />
-              </Button>
-            </div>
-            
-            <div className="flex items-center mt-2">
-              <div className="flex items-center mr-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${i < Math.floor(product.rating) ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
-                  />
-                ))}
-                <span className="ml-2 text-sm text-muted-foreground">
-                  {product.rating} ({product.reviewsCount} reviews)
-                </span>
-              </div>
-              
-              {product.inStock ? (
-                <Badge className="bg-green-500 hover:bg-green-600">In Stock</Badge>
-              ) : (
-                <Badge variant="outline" className="text-red-500 border-red-500">Out of Stock</Badge>
-              )}
-            </div>
+            <h1 className="text-3xl font-bold">{product.name}</h1>
             
             <div className="flex items-baseline mt-4">
               <div className="flex items-center">
@@ -401,15 +360,10 @@ const ProductDetail = () => {
               </div>
               
               {product.originalPrice && (
-                <>
-                  <div className="flex items-center ml-3 text-muted-foreground line-through">
-                    <BadgeIndianRupee className="h-3 w-3 mr-1" />
-                    <span>{product.originalPrice.toFixed(2)}</span>
-                  </div>
-                  <Badge className="ml-3 bg-red-500 hover:bg-red-600">
-                    {Math.round((1 - product.price / product.originalPrice) * 100)}% Off
-                  </Badge>
-                </>
+                <div className="flex items-center ml-3 text-muted-foreground line-through">
+                  <BadgeIndianRupee className="h-3 w-3 mr-1" />
+                  <span>{product.originalPrice.toFixed(2)}</span>
+                </div>
               )}
             </div>
             
@@ -424,7 +378,7 @@ const ProductDetail = () => {
               {/* Variants */}
               {product.variants && product.variants.length > 1 && (
                 <div>
-                  <Label htmlFor="variant" className="block mb-2">Variant</Label>
+                  <Label htmlFor="variant" className="block mb-2 font-medium">Variant</Label>
                   <RadioGroup
                     value={selectedVariant || product.variants[0].id}
                     onValueChange={setSelectedVariant}
@@ -449,7 +403,7 @@ const ProductDetail = () => {
               {/* Size */}
               {product.options?.sizes && (
                 <div>
-                  <Label htmlFor="size" className="block mb-2">Size</Label>
+                  <Label htmlFor="size" className="block mb-2 font-medium">Size</Label>
                   <Select
                     defaultValue={selectedOptions.size}
                     onValueChange={(value) => setSelectedOptions({...selectedOptions, size: value})}
@@ -469,7 +423,7 @@ const ProductDetail = () => {
               {/* Material */}
               {product.options?.materials && (
                 <div>
-                  <Label htmlFor="material" className="block mb-2">Material</Label>
+                  <Label htmlFor="material" className="block mb-2 font-medium">Material</Label>
                   <Select
                     defaultValue={selectedOptions.material}
                     onValueChange={(value) => setSelectedOptions({...selectedOptions, material: value})}
@@ -489,7 +443,7 @@ const ProductDetail = () => {
               {/* Orientation */}
               {product.options?.orientations && (
                 <div>
-                  <Label htmlFor="orientation" className="block mb-2">Orientation</Label>
+                  <Label htmlFor="orientation" className="block mb-2 font-medium">Orientation</Label>
                   <RadioGroup
                     defaultValue={selectedOptions.orientation}
                     onValueChange={(value: 'Horizontal' | 'Vertical') => setSelectedOptions({...selectedOptions, orientation: value})}
@@ -508,10 +462,10 @@ const ProductDetail = () => {
               {/* Addons */}
               {product.options?.addons && (
                 <div>
-                  <Label className="block mb-2">Addons</Label>
+                  <Label className="block mb-2 font-medium">Addons</Label>
                   <div className="grid grid-cols-1 gap-2">
                     {product.options.addons.map((addon) => (
-                      <div key={addon.id} className="flex items-center space-x-2 rounded-md border p-3">
+                      <div key={addon.id} className="flex items-center space-x-2 rounded-md border p-3 hover:bg-muted/50 transition-colors">
                         <Checkbox
                           id={addon.id}
                           checked={selectedAddons[addon.id] || false}
@@ -536,7 +490,7 @@ const ProductDetail = () => {
               
               {/* Quantity */}
               <div>
-                <Label htmlFor="quantity" className="block mb-2">Quantity</Label>
+                <Label htmlFor="quantity" className="block mb-2 font-medium">Quantity</Label>
                 <div className="flex items-center">
                   <Button
                     variant="outline"
@@ -566,18 +520,13 @@ const ProductDetail = () => {
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 mt-4">
+            <div className="mt-4">
               <Button 
-                className="flex-1" 
+                className="w-full py-6"
                 onClick={handleAddToCart}
-                disabled={!product.inStock}
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 Add to Cart
-              </Button>
-              <Button variant="outline" className="flex-1">
-                <Heart className="h-5 w-5 mr-2" />
-                Save for Later
               </Button>
             </div>
             
@@ -608,10 +557,9 @@ const ProductDetail = () => {
       
       {/* Product details tabs */}
       <Tabs defaultValue="description" className="mb-16">
-        <TabsList className="mb-6">
-          <TabsTrigger value="description">Description</TabsTrigger>
-          <TabsTrigger value="specifications">Specifications</TabsTrigger>
-          <TabsTrigger value="reviews">Reviews</TabsTrigger>
+        <TabsList className="mb-6 w-full sm:w-auto">
+          <TabsTrigger value="description" className="flex-1">Description</TabsTrigger>
+          <TabsTrigger value="specifications" className="flex-1">Specifications</TabsTrigger>
         </TabsList>
         
         <TabsContent value="description" className="text-muted-foreground">
@@ -640,72 +588,13 @@ const ProductDetail = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
-        <TabsContent value="reviews">
-          <Card>
-            <CardContent className="p-6">
-              {product.reviews && product.reviews.length > 0 ? (
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-xl font-semibold">Customer Reviews</h3>
-                      <div className="flex items-center mt-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-4 w-4 ${i < Math.floor(product.rating) ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
-                          />
-                        ))}
-                        <span className="ml-2 text-sm">
-                          Based on {product.reviews.length} reviews
-                        </span>
-                      </div>
-                    </div>
-                    <Button>Write a Review</Button>
-                  </div>
-                  
-                  <Separator />
-                  
-                  <div className="space-y-6">
-                    {product.reviews.map((review) => (
-                      <div key={review.id} className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <span className="font-medium">{review.user}</span>
-                            <div className="flex items-center mt-1">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`h-3 w-3 ${i < review.rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          <span className="text-sm text-muted-foreground">{new Date(review.date).toLocaleDateString()}</span>
-                        </div>
-                        <p className="text-muted-foreground">{review.content}</p>
-                        <Separator className="mt-4" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <h3 className="text-xl font-semibold mb-2">No Reviews Yet</h3>
-                  <p className="text-muted-foreground mb-4">Be the first to review this product</p>
-                  <Button>Write a Review</Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
       
       {/* Related products */}
       {relatedProducts.length > 0 && (
         <div className="mb-16">
           <h2 className="text-2xl font-bold mb-6">Related Products</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {relatedProducts.map((relatedProduct) => (
               <Link key={relatedProduct.id} to={`/products/${relatedProduct.category}/${relatedProduct.id}`}>
                 <Card className="h-full transition-all hover:shadow-md">
@@ -715,22 +604,13 @@ const ProductDetail = () => {
                       alt={relatedProduct.name}
                       className="w-full h-full object-cover"
                     />
-                    {!relatedProduct.inStock && (
-                      <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
-                        Out of Stock
-                      </Badge>
-                    )}
                   </div>
                   <CardContent className="p-4">
                     <h3 className="font-medium line-clamp-1">{relatedProduct.name}</h3>
-                    <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center mt-2">
                       <div className="flex items-center">
                         <BadgeIndianRupee className="h-4 w-4 mr-1" />
                         <span className="font-semibold">{relatedProduct.price.toFixed(2)}</span>
-                      </div>
-                      <div className="text-sm text-yellow-500 flex items-center">
-                        <Star className="h-3 w-3 fill-yellow-500 mr-1" />
-                        <span>{relatedProduct.rating}</span>
                       </div>
                     </div>
                   </CardContent>

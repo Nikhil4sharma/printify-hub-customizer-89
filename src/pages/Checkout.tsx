@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,7 +19,7 @@ const CheckoutPage = () => {
     toast({
       title: "Order placed successfully",
       description: "Your order has been placed successfully",
-      variant: "default", // Changed from "success" to "default"
+      variant: "default",
     });
     navigate('/');
   };
