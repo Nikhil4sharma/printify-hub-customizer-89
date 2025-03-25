@@ -103,17 +103,33 @@ const Header: React.FC = () => {
         </div>
 
         {/* Mobile Menu Toggle */}
-        <button
-          className="md:hidden p-2 rounded-full hover:bg-secondary transition-colors"
-          onClick={toggleMobileMenu}
-          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-        >
-          {isMobileMenuOpen ? (
-            <X size={24} className="text-foreground" />
-          ) : (
-            <Menu size={24} className="text-foreground" />
-          )}
-        </button>
+        <div className="md:hidden flex items-center gap-3">
+          {/* Cart icon always visible in mobile */}
+          <Link
+            to="/cart"
+            className="p-2 rounded-full hover:bg-secondary transition-colors relative"
+            aria-label="Cart"
+          >
+            <ShoppingCart size={20} className="text-foreground" />
+            {totalItems > 0 && (
+              <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
+          </Link>
+          
+          <button
+            className="p-2 rounded-full hover:bg-secondary transition-colors"
+            onClick={toggleMobileMenu}
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+          >
+            {isMobileMenuOpen ? (
+              <X size={24} className="text-foreground" />
+            ) : (
+              <Menu size={24} className="text-foreground" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -123,11 +139,22 @@ const Header: React.FC = () => {
         }`}
       >
         <div className="container-custom py-20 flex flex-col h-full">
-          <nav className="flex flex-col space-y-8 text-lg">
+          <nav className="flex flex-col space-y-6 text-lg">
             <Link to="/products/business-cards" className="nav-link" onClick={closeMobileMenu}>Business Cards</Link>
             <Link to="/products/stationery" className="nav-link" onClick={closeMobileMenu}>Stationery</Link>
             <Link to="/products/bags" className="nav-link" onClick={closeMobileMenu}>Carry Bags</Link>
             <Link to="/products/boxes" className="nav-link" onClick={closeMobileMenu}>Boxes</Link>
+            
+            {/* Add profile links to mobile menu */}
+            {isAuthenticated && (
+              <>
+                <div className="pt-4 border-t border-border">
+                  <span className="text-sm font-semibold text-muted-foreground">Account</span>
+                </div>
+                <Link to="/account/profile" className="nav-link" onClick={closeMobileMenu}>Profile</Link>
+                <Link to="/account/orders" className="nav-link" onClick={closeMobileMenu}>Orders</Link>
+              </>
+            )}
           </nav>
           
           <div className="mt-auto flex items-center justify-between border-t border-border pt-4">

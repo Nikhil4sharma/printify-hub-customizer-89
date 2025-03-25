@@ -26,6 +26,7 @@ const CartPage = () => {
     navigate('/checkout');
   };
 
+  // Define motion variants for animations
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -36,7 +37,7 @@ const CartPage = () => {
     }
   };
 
-  const item = {
+  const itemVariant = {
     hidden: { y: 20, opacity: 0 },
     show: { y: 0, opacity: 1 }
   };
@@ -71,7 +72,7 @@ const CartPage = () => {
           animate="show"
         >
           {items.map((cartItem) => (
-            <motion.div key={cartItem.id} variants={item} className="mb-4">
+            <motion.div key={cartItem.id} variants={itemVariant} className="mb-4">
               <Card>
                 <CardContent className="p-4">
                   <div className="flex flex-col sm:flex-row gap-4">
