@@ -290,18 +290,10 @@ const ProductDetail = () => {
   };
 
   const getFileIcon = (fileName: string) => {
-    const extension = fileName.split('.').pop()?.toLowerCase();
-    
-    switch (extension) {
-      case 'pdf':
-        return <File className="h-5 w-5 text-red-500" />;
-      case 'ai':
-        return <File className="h-5 w-5 text-amber-500" />;
-      case 'cdr':
-        return <FileImage className="h-5 w-5 text-blue-500" />;
-      default:
-        return <FileImage className="h-5 w-5" />;
-    }
+    if (fileName.endsWith('.pdf')) return <File className="h-5 w-5 text-red-500" />;
+    if (fileName.endsWith('.ai')) return <File className="h-5 w-5 text-amber-500" />;
+    if (fileName.endsWith('.cdr')) return <FileImage className="h-5 w-5 text-blue-500" />;
+    return <FileImage className="h-5 w-5" />;
   };
 
   const handleAddToCart = () => {
