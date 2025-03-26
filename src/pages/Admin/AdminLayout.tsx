@@ -12,17 +12,51 @@ import {
   Menu, 
   X, 
   Grid2x2,
-  User
+  User,
+  Download,
+  UploadCloud
 } from 'lucide-react';
 import { useAdminAuth } from '@/context/AdminAuthContext';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+
+// These interfaces are prepared for real data integration
+interface AdminPageData {
+  totalUsers?: number;
+  totalOrders?: number;
+  totalProducts?: number;
+  pendingOrders?: number;
+}
 
 const AdminLayout = () => {
   const { admin, logout } = useAdminAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  // This state will be replaced with real data from a database
+  const [pageData, setPageData] = useState<AdminPageData>({
+    totalUsers: 0,
+    totalOrders: 0,
+    totalProducts: 0,
+    pendingOrders: 0
+  });
+
+  // This function will be replaced with real data fetching
+  // For now it's just a placeholder that would be called in useEffect
+  const fetchDashboardData = async () => {
+    // When connected to Supabase or another backend, this will be replaced with:
+    // const { data, error } = await supabase.from('users').select('count')
+    // const { data: orderData, error: orderError } = await supabase.from('orders').select('count')
+    // etc.
+    
+    // For now, we'll just use mock data
+    setPageData({
+      totalUsers: 120,
+      totalOrders: 345,
+      totalProducts: 67,
+      pendingOrders: 12
+    });
+  };
 
   const handleLogout = () => {
     logout();
@@ -105,6 +139,27 @@ const AdminLayout = () => {
               <User className="h-5 w-5 mr-3" />
               Profile
             </Link>
+            
+            {/* Data Management Section - for future functionality */}
+            <div className="pt-4 mt-4 border-t border-border">
+              <p className="px-3 text-xs font-medium text-muted-foreground mb-2">Data Management</p>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full justify-start text-xs mb-2" 
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export Data
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full justify-start text-xs" 
+              >
+                <UploadCloud className="h-4 w-4 mr-2" />
+                Import Data
+              </Button>
+            </div>
           </nav>
 
           <div className="p-4 border-t border-border">

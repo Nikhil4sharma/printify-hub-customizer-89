@@ -50,10 +50,14 @@ const Header: React.FC = () => {
     { name: 'Wedding Cards', path: '/products/wedding-cards' },
   ];
 
+  const isProductPage = location.pathname.includes('/products/');
+  const isCartPage = location.pathname === '/cart';
+  const isCheckoutPage = location.pathname === '/checkout';
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+        isScrolled || isProductPage || isCartPage || isCheckoutPage
           ? 'bg-white/80 dark:bg-black/80 backdrop-blur-lg shadow-sm py-3'
           : 'bg-transparent py-5'
       }`}

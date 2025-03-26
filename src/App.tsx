@@ -19,6 +19,7 @@ import AdminOrders from "./pages/Admin/Orders";
 import AdminProducts from "./pages/Admin/Products";
 import AdminCategories from "./pages/Admin/Categories";
 import AdminSettings from "./pages/Admin/Settings";
+import AdminProfile from "./pages/Admin/Profile";
 import AdminLogin from "./pages/Admin/Login";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -32,7 +33,14 @@ import ProductDetail from "./pages/Products/ProductDetail";
 import Contact from "./pages/Contact";
 
 // Create a new QueryClient instance outside the component
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 // Admin route guard component
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
@@ -98,6 +106,7 @@ const App = () => (
                       <Route path="products" element={<AdminProducts />} />
                       <Route path="categories" element={<AdminCategories />} />
                       <Route path="settings" element={<AdminSettings />} />
+                      <Route path="profile" element={<AdminProfile />} />
                     </Route>
                     
                     <Route path="*" element={<NotFound />} />
