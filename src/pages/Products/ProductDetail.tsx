@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -25,8 +25,15 @@ import {
   File,
   UploadCloud,
   Check,
-  DollarSign,
+  IndianRupee,
 } from 'lucide-react';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface Review {
   id: string;
@@ -177,14 +184,13 @@ const ProductDetail = () => {
   const { category, id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { addToCart, items, totalItems } = useCart();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Find the product based on the ID from the URL
   const product = allProducts.find(p => p.id === id);
   
   const [quantity, setQuantity] = useState<number>(100);
-  const [activeImage, setActiveImage] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState({
     size: '',
     thickness: '',
@@ -341,23 +347,44 @@ const ProductDetail = () => {
 
       {/* Product details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-        {/* Product images */}
+        {/* Product images - now with carousel */}
         <div className="space-y-6">
-          <div className="bg-muted rounded-lg overflow-hidden aspect-square shadow-md">
-            <img
-              src={product.gallery?.[activeImage] || product.image}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
+          {product.gallery && product.gallery.length > 0 ? (
+            <Carousel className="w-full">
+              <CarouselContent>
+                {product.gallery.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <div className="bg-muted rounded-lg overflow-hidden aspect-square shadow-md">
+                      <img
+                        src={image}
+                        alt={`${product.name} - View ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex items-center justify-center mt-4">
+                <CarouselPrevious className="relative left-0" />
+                <CarouselNext className="relative right-0" />
+              </div>
+            </Carousel>
+          ) : (
+            <div className="bg-muted rounded-lg overflow-hidden aspect-square shadow-md">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
           
           {product.gallery && product.gallery.length > 1 && (
             <div className="grid grid-cols-4 gap-3">
               {product.gallery.map((image, index) => (
                 <div
                   key={index}
-                  className={`aspect-square bg-muted rounded-md overflow-hidden cursor-pointer border-2 transition-all ${index === activeImage ? 'border-primary scale-105' : 'border-transparent hover:border-muted-foreground'}`}
-                  onClick={() => setActiveImage(index)}
+                  className={`aspect-square bg-muted rounded-md overflow-hidden cursor-pointer border-2 transition-all ${index === 0 ? 'border-primary scale-105' : 'border-transparent hover:border-muted-foreground'}`}
                 >
                   <img
                     src={image}
@@ -377,13 +404,13 @@ const ProductDetail = () => {
             
             <div className="flex items-baseline mb-4">
               <span className="flex items-center text-2xl font-bold">
-                <DollarSign className="h-5 w-5 mr-1" />
+                <IndianRupee className="h-5 w-5 mr-1" />
                 <span>{totalPrice().toFixed(2)}</span>
               </span>
               
               {product.originalPrice && (
                 <div className="flex items-center ml-3 text-muted-foreground line-through">
-                  <DollarSign className="h-3 w-3 mr-1" />
+                  <IndianRupee className="h-3 w-3 mr-1" />
                   <span>{product.originalPrice.toFixed(2)}</span>
                 </div>
               )}
@@ -552,7 +579,7 @@ const ProductDetail = () => {
               </div>
             </div>
             
-            <div className="mt-8">
+            <div className="mt-8 space-y-3">
               <Button 
                 className="w-full py-6"
                 onClick={handleAddToCart}
@@ -560,6 +587,16 @@ const ProductDetail = () => {
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 Add to Cart
               </Button>
+              
+              {totalItems > 0 && (
+                <Button 
+                  className="w-full py-6"
+                  variant="outline"
+                  onClick={() => navigate('/cart')}
+                >
+                  Continue to Cart
+                </Button>
+              )}
             </div>
             
             <div className="mt-6 text-sm space-y-2">
@@ -606,7 +643,7 @@ const ProductDetail = () => {
                     <h3 className="font-medium line-clamp-1">{relatedProduct.name}</h3>
                     <div className="flex items-center mt-2">
                       <div className="flex items-center">
-                        <DollarSign className="h-4 w-4 mr-1" />
+                        <IndianRupee className="h-4 w-4 mr-1" />
                         <span className="font-semibold">{relatedProduct.price.toFixed(2)}</span>
                       </div>
                     </div>
