@@ -199,6 +199,7 @@ const ProductDetail = () => {
   });
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState('');
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   // Set initial values when product loads
   React.useEffect(() => {
@@ -224,6 +225,11 @@ const ProductDetail = () => {
       </div>
     );
   }
+
+  // Ensure we have gallery images, or use the main image as fallback
+  const galleryImages = product.gallery && product.gallery.length > 0 
+    ? product.gallery 
+    : Array(4).fill(product.image);
 
   // Find related products
   const relatedProducts = product.relatedProducts
@@ -347,54 +353,31 @@ const ProductDetail = () => {
 
       {/* Product details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-        {/* Product images - now with carousel */}
+        {/* Product images */}
         <div className="space-y-6">
-          {product.gallery && product.gallery.length > 0 ? (
-            <Carousel className="w-full">
-              <CarouselContent>
-                {product.gallery.map((image, index) => (
-                  <CarouselItem key={index}>
-                    <div className="bg-muted rounded-lg overflow-hidden aspect-square shadow-md">
-                      <img
-                        src={image}
-                        alt={`${product.name} - View ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <div className="flex items-center justify-center mt-4">
-                <CarouselPrevious className="relative left-0" />
-                <CarouselNext className="relative right-0" />
-              </div>
-            </Carousel>
-          ) : (
-            <div className="bg-muted rounded-lg overflow-hidden aspect-square shadow-md">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
+          <div className="bg-muted rounded-lg overflow-hidden aspect-square shadow-md">
+            <img
+              src={galleryImages[selectedImageIndex]}
+              alt={`${product.name} - Main view`}
+              className="w-full h-full object-cover"
+            />
+          </div>
           
-          {product.gallery && product.gallery.length > 1 && (
-            <div className="grid grid-cols-4 gap-3">
-              {product.gallery.map((image, index) => (
-                <div
-                  key={index}
-                  className={`aspect-square bg-muted rounded-md overflow-hidden cursor-pointer border-2 transition-all ${index === 0 ? 'border-primary scale-105' : 'border-transparent hover:border-muted-foreground'}`}
-                >
-                  <img
-                    src={image}
-                    alt={`${product.name} - View ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-4 gap-3">
+            {galleryImages.slice(0, 4).map((image, index) => (
+              <div
+                key={index}
+                className={`aspect-square bg-muted rounded-md overflow-hidden cursor-pointer border-2 transition-all ${selectedImageIndex === index ? 'border-primary scale-105' : 'border-transparent hover:border-muted-foreground'}`}
+                onClick={() => setSelectedImageIndex(index)}
+              >
+                <img
+                  src={image}
+                  alt={`${product.name} - View ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
         </div>
         
         {/* Product info */}

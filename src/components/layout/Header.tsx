@@ -1,16 +1,27 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { ShoppingCart, User, Menu, X } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { cn } from '@/lib/utils';
 
 const Header: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
   const { totalItems } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   // Change header appearance on scroll
   useEffect(() => {
@@ -30,6 +41,15 @@ const Header: React.FC = () => {
     setIsMobileMenuOpen(false);
   };
 
+  // Categories for navigation menu
+  const categories = [
+    { name: 'Business Cards', path: '/products/business-cards' },
+    { name: 'Stationery', path: '/products/stationery' },
+    { name: 'Carry Bags', path: '/products/bags' },
+    { name: 'Boxes', path: '/products/boxes' },
+    { name: 'Wedding Cards', path: '/products/wedding-cards' },
+  ];
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -38,7 +58,7 @@ const Header: React.FC = () => {
           : 'bg-transparent py-5'
       }`}
     >
-      <div className="container-custom flex items-center justify-between">
+      <div className="container max-w-6xl mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
         <Link 
           to="/" 
@@ -48,12 +68,45 @@ const Header: React.FC = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          <Link to="/products/business-cards" className="nav-link">Business Cards</Link>
-          <Link to="/products/stationery" className="nav-link">Stationery</Link>
-          <Link to="/products/bags" className="nav-link">Carry Bags</Link>
-          <Link to="/products/boxes" className="nav-link">Boxes</Link>
-        </nav>
+        <NavigationMenu className="hidden md:flex">
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <Link to="/" className={navigationMenuTriggerStyle()}>
+                Home
+              </Link>
+            </NavigationMenuItem>
+            
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                  {categories.map((category) => (
+                    <li key={category.path}>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to={category.path}
+                          className={cn(
+                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                            location.pathname.includes(category.path.split('/').pop() || '') ? 
+                              "bg-accent text-accent-foreground" : ""
+                          )}
+                        >
+                          <div className="text-sm font-medium leading-none">{category.name}</div>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            
+            <NavigationMenuItem>
+              <Link to="/contact" className={navigationMenuTriggerStyle()}>
+                Contact
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center space-x-4">
@@ -138,12 +191,25 @@ const Header: React.FC = () => {
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="container-custom py-20 flex flex-col h-full">
+        <div className="container mx-auto py-20 flex flex-col h-full">
           <nav className="flex flex-col space-y-6 text-lg">
-            <Link to="/products/business-cards" className="nav-link" onClick={closeMobileMenu}>Business Cards</Link>
-            <Link to="/products/stationery" className="nav-link" onClick={closeMobileMenu}>Stationery</Link>
-            <Link to="/products/bags" className="nav-link" onClick={closeMobileMenu}>Carry Bags</Link>
-            <Link to="/products/boxes" className="nav-link" onClick={closeMobileMenu}>Boxes</Link>
+            <Link to="/" className="nav-link" onClick={closeMobileMenu}>Home</Link>
+            
+            <div className="border-t border-border pt-4">
+              <span className="text-sm font-semibold text-muted-foreground">Products</span>
+            </div>
+            {categories.map(category => (
+              <Link 
+                key={category.path} 
+                to={category.path} 
+                className="nav-link" 
+                onClick={closeMobileMenu}
+              >
+                {category.name}
+              </Link>
+            ))}
+            
+            <Link to="/contact" className="nav-link" onClick={closeMobileMenu}>Contact</Link>
             
             {/* Add profile links to mobile menu */}
             {isAuthenticated && (
@@ -158,7 +224,6 @@ const Header: React.FC = () => {
           </nav>
           
           <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
-            {/* Updated: Use a component with onClick callback */}
             <div onClick={closeMobileMenu}>
               <ThemeToggle variant="switch" />
             </div>
