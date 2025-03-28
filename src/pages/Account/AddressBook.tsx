@@ -9,12 +9,27 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/context/AuthContext';
+import AccountLayout from './AccountLayout';
 
-// Mock address data
-const initialAddresses = [
+interface Address {
+  id: number;
+  type: 'home' | 'office' | 'other'; // Changed from string to union type
+  isDefault: boolean;
+  name: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  phone: string;
+}
+
+// Mock address data with correct type
+const initialAddresses: Address[] = [
   {
     id: 1,
-    type: 'home',
+    type: 'home', // Now using the correct union type
     isDefault: true,
     name: 'John Doe',
     street: '123 Main Street',
@@ -26,7 +41,7 @@ const initialAddresses = [
   },
   {
     id: 2,
-    type: 'office',
+    type: 'office', // Now using the correct union type
     isDefault: false,
     name: 'John Doe',
     street: '456 Business Ave, Suite 200',
@@ -38,23 +53,11 @@ const initialAddresses = [
   }
 ];
 
-interface Address {
-  id: number;
-  type: 'home' | 'office' | 'other';
-  isDefault: boolean;
-  name: string;
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  phone: string;
-}
-
 const AddressBook: React.FC = () => {
   const [addresses, setAddresses] = useState<Address[]>(initialAddresses);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
   
   // Function to add a new address
   const handleAddAddress = (address: Omit<Address, 'id'>) => {
@@ -191,7 +194,7 @@ const AddressBook: React.FC = () => {
       setFormData(prev => ({ ...prev, [name]: value }));
     };
     
-    const handleRadioChange = (value: string) => {
+    const handleRadioChange = (value: 'home' | 'office' | 'other') => {
       setFormData(prev => ({ ...prev, type: value }));
     };
     

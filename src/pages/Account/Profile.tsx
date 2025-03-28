@@ -4,12 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { Pencil, User, X } from 'lucide-react';
 import AccountLayout from './AccountLayout';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const ProfilePage = () => {
   const { user, updateProfile } = useAuth();
@@ -41,7 +39,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <AccountLayout>
+    <div>
       <h1 className="text-3xl font-bold mb-6">My Profile</h1>
       
       <Card>
@@ -131,7 +129,7 @@ const ProfilePage = () => {
           </CardFooter>
         )}
       </Card>
-    </AccountLayout>
+    </div>
   );
 };
 
