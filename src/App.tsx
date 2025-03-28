@@ -29,9 +29,11 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import ProfilePage from "./pages/Account/Profile";
 import OrdersPage from "./pages/Account/Orders";
+import AddressBook from "./pages/Account/AddressBook";
 import ProductsListing from "./pages/Products/ProductsListing";
 import ProductDetail from "./pages/Products/ProductDetail";
 import Contact from "./pages/Contact";
+import AccountLayout from "./pages/Account/AccountLayout";
 
 // Create a new QueryClient instance outside the component
 const queryClient = new QueryClient({
@@ -104,10 +106,13 @@ const App = () => (
                       </MainLayout>
                     } />
                     
+                    {/* User account routes */}
                     <Route path="/account/profile" element={
                       <AuthRoute>
                         <MainLayout>
-                          <ProfilePage />
+                          <AccountLayout>
+                            <ProfilePage />
+                          </AccountLayout>
                         </MainLayout>
                       </AuthRoute>
                     } />
@@ -115,7 +120,19 @@ const App = () => (
                     <Route path="/account/orders" element={
                       <AuthRoute>
                         <MainLayout>
-                          <OrdersPage />
+                          <AccountLayout>
+                            <OrdersPage />
+                          </AccountLayout>
+                        </MainLayout>
+                      </AuthRoute>
+                    } />
+                    
+                    <Route path="/account/addresses" element={
+                      <AuthRoute>
+                        <MainLayout>
+                          <AccountLayout>
+                            <AddressBook />
+                          </AccountLayout>
                         </MainLayout>
                       </AuthRoute>
                     } />

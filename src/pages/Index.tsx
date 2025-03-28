@@ -1,14 +1,11 @@
 
 import React from 'react';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import Hero from '@/components/home/Hero';
 import Categories from '@/components/home/Categories';
 
 const Index: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       <main className="flex-grow">
         <Hero />
         <Categories />
@@ -106,7 +103,6 @@ const Index: React.FC = () => {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 };
