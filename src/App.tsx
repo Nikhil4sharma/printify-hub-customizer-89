@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { AdminAuthProvider } from "@/context/AdminAuthContext";
+import MainLayout from "@/components/layout/MainLayout";
 
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -69,29 +70,61 @@ const App = () => (
                 <BrowserRouter>
                   <Routes>
                     {/* Customer facing routes */}
-                    <Route path="/" element={<Index />} />
-                    <Route path="/products/:category" element={<ProductsListing />} />
-                    <Route path="/products/:category/:id" element={<ProductDetail />} />
+                    <Route path="/" element={
+                      <MainLayout>
+                        <Index />
+                      </MainLayout>
+                    } />
+                    
+                    <Route path="/products/:category" element={
+                      <MainLayout>
+                        <ProductsListing />
+                      </MainLayout>
+                    } />
+                    
+                    <Route path="/products/:category/:id" element={
+                      <MainLayout>
+                        <ProductDetail />
+                      </MainLayout>
+                    } />
                     
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/cart" element={
+                      <MainLayout>
+                        <Cart />
+                      </MainLayout>
+                    } />
+                    
+                    <Route path="/checkout" element={
+                      <MainLayout>
+                        <Checkout />
+                      </MainLayout>
+                    } />
                     
                     <Route path="/account/profile" element={
                       <AuthRoute>
-                        <ProfilePage />
-                      </AuthRoute>
-                    } />
-                    <Route path="/account/orders" element={
-                      <AuthRoute>
-                        <OrdersPage />
+                        <MainLayout>
+                          <ProfilePage />
+                        </MainLayout>
                       </AuthRoute>
                     } />
                     
-                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/account/orders" element={
+                      <AuthRoute>
+                        <MainLayout>
+                          <OrdersPage />
+                        </MainLayout>
+                      </AuthRoute>
+                    } />
+                    
+                    <Route path="/contact" element={
+                      <MainLayout>
+                        <Contact />
+                      </MainLayout>
+                    } />
                     
                     {/* Admin routes */}
                     <Route path="/admin/login" element={<AdminLogin />} />
@@ -109,7 +142,11 @@ const App = () => (
                       <Route path="profile" element={<AdminProfile />} />
                     </Route>
                     
-                    <Route path="*" element={<NotFound />} />
+                    <Route path="*" element={
+                      <MainLayout>
+                        <NotFound />
+                      </MainLayout>
+                    } />
                   </Routes>
                 </BrowserRouter>
               </TooltipProvider>

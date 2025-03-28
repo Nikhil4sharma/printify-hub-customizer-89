@@ -56,9 +56,9 @@ const Header: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled || isProductPage || isCartPage || isCheckoutPage
-          ? 'bg-white/80 dark:bg-black/80 backdrop-blur-lg shadow-sm py-3'
+          ? 'bg-white/90 dark:bg-black/90 backdrop-blur-lg shadow-sm py-3'
           : 'bg-transparent py-5'
       }`}
     >

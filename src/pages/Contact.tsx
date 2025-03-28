@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin, Phone, Clock, Send, MessageSquare, Building, Users, Headphones } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -56,16 +56,62 @@ const ContactPage = () => {
 
   return (
     <div className="container max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-2">Contact Us</h1>
-      <p className="text-muted-foreground mb-8">
-        We'd love to hear from you. Please fill out the form below or use our contact information.
-      </p>
+      {/* Hero Section */}
+      <div className="text-center mb-16">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4">Get in Touch</h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
+          Have questions about our printing services? We're here to help.
+          Our team of experts is just a message away.
+        </p>
+      </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Why Contact Us Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <Card className="bg-primary/5 border-none">
+          <CardContent className="pt-6">
+            <div className="mb-4 bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center">
+              <MessageSquare className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Expert Advice</h3>
+            <p className="text-muted-foreground">
+              Get professional guidance on choosing the right printing options for your projects.
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-primary/5 border-none">
+          <CardContent className="pt-6">
+            <div className="mb-4 bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center">
+              <Building className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Custom Orders</h3>
+            <p className="text-muted-foreground">
+              Discuss your custom printing requirements and get tailored solutions.
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-primary/5 border-none">
+          <CardContent className="pt-6">
+            <div className="mb-4 bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center">
+              <Headphones className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Support</h3>
+            <p className="text-muted-foreground">
+              Need help with an existing order? Our customer service team is ready to assist.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
         <div className="lg:col-span-2">
-          <Card>
+          <Card className="shadow-md">
             <CardHeader>
-              <CardTitle>Send Us a Message</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Send className="h-5 w-5 text-primary" />
+                Send Us a Message
+              </CardTitle>
               <CardDescription>
                 Fill out the form below and we'll get back to you as soon as possible.
               </CardDescription>
@@ -152,6 +198,7 @@ const ContactPage = () => {
                   />
                   
                   <Button type="submit" className="w-full md:w-auto">
+                    <Send className="h-4 w-4 mr-2" />
                     Send Message
                   </Button>
                 </form>
@@ -160,12 +207,15 @@ const ContactPage = () => {
           </Card>
         </div>
         
-        <div>
-          <Card className="mb-6">
+        <div className="space-y-6">
+          <Card className="shadow-md">
             <CardHeader>
-              <CardTitle>Contact Information</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" />
+                Contact Information
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <div className="flex items-start">
                 <div className="bg-primary/10 p-2 rounded-full mr-4">
                   <MapPin className="h-5 w-5 text-primary" />
@@ -205,37 +255,102 @@ const ContactPage = () => {
                   </p>
                 </div>
               </div>
+              
+              <div className="flex items-start">
+                <div className="bg-primary/10 p-2 rounded-full mr-4">
+                  <Clock className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Business Hours</h3>
+                  <div className="text-muted-foreground mt-1 space-y-1">
+                    <div className="flex justify-between">
+                      <span>Monday - Friday:</span>
+                      <span>9:00 AM - 6:00 PM</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Saturday:</span>
+                      <span>10:00 AM - 4:00 PM</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Sunday:</span>
+                      <span>Closed</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader>
-              <CardTitle>Business Hours</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Monday - Friday:</span>
-                  <span>9:00 AM - 6:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Saturday:</span>
-                  <span>10:00 AM - 4:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Sunday:</span>
-                  <span>Closed</span>
-                </div>
-              </div>
+          <Card className="bg-primary text-primary-foreground shadow-md">
+            <CardContent className="pt-6">
+              <h3 className="text-xl font-bold mb-2">Need urgent assistance?</h3>
+              <p className="mb-4 opacity-90">
+                Call our customer service hotline for immediate help.
+              </p>
+              <Button variant="secondary" className="w-full">
+                <Phone className="h-4 w-4 mr-2" />
+                +91 98765 43210
+              </Button>
             </CardContent>
           </Card>
         </div>
       </div>
       
-      <div className="mt-12">
-        <h2 className="text-2xl font-bold mb-6">Find Us on the Map</h2>
-        <div className="h-96 bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
-          <p>Google Maps Embed would go here in a production app</p>
+      <div className="mb-16">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+          <MapPin className="h-5 w-5 text-primary" />
+          Find Us on the Map
+        </h2>
+        <div className="h-96 bg-muted rounded-lg shadow-md overflow-hidden">
+          <div className="h-full w-full flex items-center justify-center bg-accent/20 text-muted-foreground">
+            <div className="text-center">
+              <MapPin className="h-12 w-12 mx-auto mb-4 text-primary/50" />
+              <p className="text-lg">Google Maps would be embedded here</p>
+              <p className="text-sm">123 Printing Street, Design District, Mumbai</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* FAQ Section */}
+      <div>
+        <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardContent className="pt-6">
+              <h3 className="font-semibold mb-2">What file formats do you accept for printing?</h3>
+              <p className="text-muted-foreground">
+                We accept PDF, AI, PSD, and JPEG files. For best results, we recommend using PDF or AI formats with all fonts converted to outlines.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="pt-6">
+              <h3 className="font-semibold mb-2">What is your typical turnaround time?</h3>
+              <p className="text-muted-foreground">
+                Standard orders are typically completed within 3-5 business days. Rush services are available for an additional fee.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="pt-6">
+              <h3 className="font-semibold mb-2">Do you offer design services?</h3>
+              <p className="text-muted-foreground">
+                Yes, we offer professional design services. Our team can help create custom designs or refine your existing artwork.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="pt-6">
+              <h3 className="font-semibold mb-2">Do you offer shipping?</h3>
+              <p className="text-muted-foreground">
+                Yes, we offer nationwide shipping. Delivery times and rates vary based on location and order size.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
