@@ -8,6 +8,10 @@ interface AdminUser {
   role: 'admin' | 'super-admin';
   lastLogin?: string;
   permissions?: string[];
+  phone?: string;
+  jobTitle?: string;
+  department?: string;
+  avatar?: string;
 }
 
 interface AdminAuthContextType {
@@ -52,6 +56,9 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         role: 'admin',
         lastLogin: new Date().toISOString(),
         permissions: ['read:all', 'write:all', 'delete:all'],
+        phone: '+1 (555) 123-4567',
+        jobTitle: 'Store Manager',
+        department: 'Operations',
       };
       
       setAdmin(mockAdmin);
