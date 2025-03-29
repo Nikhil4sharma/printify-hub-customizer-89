@@ -105,8 +105,9 @@ const AdminUsers = () => {
     );
   };
 
-  const handleSelectAllUsers = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
+  // Fixed this function to accept a boolean or string value instead of an event
+  const handleSelectAllUsers = (checked: boolean | string) => {
+    if (checked) {
       setSelectedUsers(users.map(user => user.id));
     } else {
       setSelectedUsers([]);

@@ -139,8 +139,9 @@ const AdminCategories = () => {
     );
   };
 
-  const handleSelectAllCategories = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
+  // Fixed this function to accept a boolean or string value instead of an event
+  const handleSelectAllCategories = (checked: boolean | string) => {
+    if (checked) {
       setSelectedCategories(categories.map(cat => cat.id));
     } else {
       setSelectedCategories([]);
