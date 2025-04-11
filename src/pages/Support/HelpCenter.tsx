@@ -278,7 +278,7 @@ const HelpCenter: React.FC = () => {
         </TabsContent>
       </Tabs>
       
-      <Separator className="my-12" />
+      <div className="my-12 border-t" />
       
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Still need help?</h2>
