@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -33,6 +34,11 @@ import ProductsListing from "./pages/Products/ProductsListing";
 import ProductDetail from "./pages/Products/ProductDetail";
 import Contact from "./pages/Contact";
 import AccountLayout from "./pages/Account/AccountLayout";
+import FAQ from "./pages/Support/FAQ";
+import ShippingPolicy from "./pages/Support/ShippingPolicy";
+import PrivacyPolicy from "./pages/Support/PrivacyPolicy";
+import TermsOfService from "./pages/Support/TermsOfService";
+import HelpCenter from "./pages/Support/HelpCenter";
 
 // Create a new QueryClient instance outside the component
 const queryClient = new QueryClient({
@@ -105,34 +111,49 @@ const App = () => (
                       </MainLayout>
                     } />
                     
+                    {/* Support pages */}
+                    <Route path="/faq" element={
+                      <MainLayout>
+                        <FAQ />
+                      </MainLayout>
+                    } />
+                    
+                    <Route path="/shipping-policy" element={
+                      <MainLayout>
+                        <ShippingPolicy />
+                      </MainLayout>
+                    } />
+                    
+                    <Route path="/privacy-policy" element={
+                      <MainLayout>
+                        <PrivacyPolicy />
+                      </MainLayout>
+                    } />
+                    
+                    <Route path="/terms-of-service" element={
+                      <MainLayout>
+                        <TermsOfService />
+                      </MainLayout>
+                    } />
+                    
+                    <Route path="/help-center" element={
+                      <MainLayout>
+                        <HelpCenter />
+                      </MainLayout>
+                    } />
+                    
                     {/* User account routes */}
-                    <Route path="/account/profile" element={
+                    <Route path="/account" element={
                       <AuthRoute>
                         <MainLayout>
-                          <ProfilePage />
+                          <AccountLayout />
                         </MainLayout>
                       </AuthRoute>
-                    } />
-                    
-                    <Route path="/account/orders" element={
-                      <AuthRoute>
-                        <MainLayout>
-                          <AccountLayout>
-                            <OrdersPage />
-                          </AccountLayout>
-                        </MainLayout>
-                      </AuthRoute>
-                    } />
-                    
-                    <Route path="/account/addresses" element={
-                      <AuthRoute>
-                        <MainLayout>
-                          <AccountLayout>
-                            <AddressBook />
-                          </AccountLayout>
-                        </MainLayout>
-                      </AuthRoute>
-                    } />
+                    }>
+                      <Route path="profile" element={<ProfilePage />} />
+                      <Route path="orders" element={<OrdersPage />} />
+                      <Route path="addresses" element={<AddressBook />} />
+                    </Route>
                     
                     <Route path="/contact" element={
                       <MainLayout>

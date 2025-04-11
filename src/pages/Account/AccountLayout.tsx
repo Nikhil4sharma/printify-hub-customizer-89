@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { 
   BarChart3, 
@@ -15,11 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 
-interface AccountLayoutProps {
-  children: React.ReactNode;
-}
-
-const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
+const AccountLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const { user, logout } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -93,7 +89,7 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
         </div>
         
         <div className="md:w-3/4">
-          {children}
+          {children || <Outlet />}
         </div>
       </div>
     </div>
