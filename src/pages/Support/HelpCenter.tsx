@@ -82,7 +82,7 @@ const HelpCenter: React.FC = () => {
     },
     {
       title: 'Return policy for custom prints',
-      excerpt: 'Custom print orders can be returned only if there's a quality issue or printing error from our side.',
+      excerpt: "Custom print orders can be returned only if there's a quality issue or printing error from our side.",
       link: '/faq#return-policy'
     },
     {
