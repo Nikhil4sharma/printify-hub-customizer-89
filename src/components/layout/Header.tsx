@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { ShoppingCart, User, Menu, X } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -32,6 +33,11 @@ const Header: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close mobile menu when changing routes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -189,48 +195,58 @@ const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Fixed with solid background */}
       <div
         className={`md:hidden fixed inset-0 bg-background z-40 transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="container mx-auto py-20 flex flex-col h-full">
-          <nav className="flex flex-col space-y-6 text-lg">
-            <Link to="/" className="nav-link" onClick={closeMobileMenu}>Home</Link>
-            
-            <div className="border-t border-border pt-4">
-              <span className="text-sm font-semibold text-muted-foreground">Products</span>
-            </div>
-            {categories.map(category => (
-              <Link 
-                key={category.path} 
-                to={category.path} 
-                className="nav-link" 
-                onClick={closeMobileMenu}
-              >
-                {category.name}
-              </Link>
-            ))}
-            
-            <Link to="/contact" className="nav-link" onClick={closeMobileMenu}>Contact</Link>
-            
-            {/* Add profile links to mobile menu */}
-            {isAuthenticated && (
-              <>
-                <div className="pt-4 border-t border-border">
-                  <span className="text-sm font-semibold text-muted-foreground">Account</span>
-                </div>
-                <Link to="/account/profile" className="nav-link" onClick={closeMobileMenu}>Profile</Link>
-                <Link to="/account/orders" className="nav-link" onClick={closeMobileMenu}>Orders</Link>
-              </>
-            )}
-          </nav>
+        <div className="container mx-auto flex flex-col h-full py-16">
+          {/* Close button in corner */}
+          <button
+            className="absolute top-4 right-4 p-2 rounded-full hover:bg-secondary transition-colors"
+            onClick={closeMobileMenu}
+            aria-label="Close menu"
+          >
+            <X size={24} className="text-foreground" />
+          </button>
           
-          <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
-            <div onClick={closeMobileMenu}>
-              <ThemeToggle variant="switch" />
-            </div>
+          {/* Scrollable mobile menu content */}
+          <ScrollArea className="flex-1">
+            <nav className="flex flex-col space-y-6 px-4 py-4 text-lg">
+              <Link to="/" className="nav-link" onClick={closeMobileMenu}>Home</Link>
+              
+              <div className="border-t border-border pt-4">
+                <span className="text-sm font-semibold text-muted-foreground">Products</span>
+              </div>
+              {categories.map(category => (
+                <Link 
+                  key={category.path} 
+                  to={category.path} 
+                  className="nav-link" 
+                  onClick={closeMobileMenu}
+                >
+                  {category.name}
+                </Link>
+              ))}
+              
+              <Link to="/contact" className="nav-link" onClick={closeMobileMenu}>Contact</Link>
+              
+              {/* Add profile links to mobile menu */}
+              {isAuthenticated && (
+                <>
+                  <div className="pt-4 border-t border-border">
+                    <span className="text-sm font-semibold text-muted-foreground">Account</span>
+                  </div>
+                  <Link to="/account/profile" className="nav-link" onClick={closeMobileMenu}>Profile</Link>
+                  <Link to="/account/orders" className="nav-link" onClick={closeMobileMenu}>Orders</Link>
+                </>
+              )}
+            </nav>
+          </ScrollArea>
+          
+          <div className="mt-auto flex items-center justify-between border-t border-border p-4">
+            <ThemeToggle variant="switch" />
             
             {isAuthenticated ? (
               <button 
