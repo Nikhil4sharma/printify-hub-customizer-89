@@ -19,6 +19,8 @@ import {
   Wallet
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
+import { fadeIn, scaleIn, itemFadeIn, staggerChildren } from '@/utils/transitions';
 
 const HelpCenter: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
@@ -93,15 +95,26 @@ const HelpCenter: React.FC = () => {
   ];
 
   return (
-    <div className="container max-w-5xl mx-auto py-12 px-4">
-      <div className="flex items-center justify-center mb-8">
+    <motion.div 
+      className="container max-w-5xl mx-auto py-12 px-4"
+      initial="initial"
+      animate="animate"
+      variants={fadeIn}
+    >
+      <motion.div 
+        className="flex items-center justify-center mb-8"
+        variants={scaleIn}
+      >
         <div className="bg-primary/10 p-3 rounded-full mr-3">
           <LifeBuoy className="h-8 w-8 text-primary" />
         </div>
         <h1 className="text-4xl font-bold">Help Center</h1>
-      </div>
+      </motion.div>
       
-      <div className="bg-muted/30 border rounded-lg p-6 mb-12">
+      <motion.div 
+        className="bg-muted/30 border rounded-lg p-6 mb-12"
+        variants={fadeIn}
+      >
         <h2 className="text-2xl font-bold mb-4 text-center">How can we help you?</h2>
         <form onSubmit={handleSearch} className="flex gap-2 max-w-xl mx-auto">
           <div className="relative flex-1">
@@ -113,7 +126,7 @@ const HelpCenter: React.FC = () => {
           </div>
           <Button type="submit">Search</Button>
         </form>
-      </div>
+      </motion.div>
 
       <Tabs defaultValue="categories" className="w-full">
         <TabsList className="grid w-full grid-cols-3 mb-8">
@@ -132,38 +145,43 @@ const HelpCenter: React.FC = () => {
         </TabsList>
         
         <TabsContent value="categories" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            variants={staggerChildren}
+          >
             {helpCategories.map((category, index) => (
-              <Card key={index}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <category.icon className="h-5 w-5 text-primary" />
-                    {category.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {category.topics.map((topic, i) => (
-                      <li key={i}>
-                        <a 
-                          href={topic.link}
-                          className="text-muted-foreground hover:text-primary hover:underline flex items-center gap-2"
-                        >
-                          <FileQuestion className="h-4 w-4" />
-                          {topic.title}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="ghost" size="sm" className="text-primary">
-                    View all articles
-                  </Button>
-                </CardFooter>
-              </Card>
+              <motion.div key={index} variants={itemFadeIn}>
+                <Card className="hover-scale transition-all">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <category.icon className="h-5 w-5 text-primary" />
+                      {category.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      {category.topics.map((topic, i) => (
+                        <li key={i}>
+                          <a 
+                            href={topic.link}
+                            className="text-muted-foreground hover:text-primary hover:underline flex items-center gap-2"
+                          >
+                            <FileQuestion className="h-4 w-4" />
+                            {topic.title}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                  <CardFooter>
+                    <Button variant="ghost" size="sm" className="text-primary">
+                      View all articles
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
           
           <div className="text-center">
             <Button asChild variant="outline">
@@ -173,26 +191,31 @@ const HelpCenter: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="popular">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <motion.div 
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
+            variants={staggerChildren}
+          >
             {popularArticles.map((article, index) => (
-              <Card key={index} className="overflow-hidden">
-                <CardHeader className="bg-muted/20 pb-4">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <FileQuestion className="h-5 w-5 text-primary" />
-                    {article.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <p className="text-muted-foreground">{article.excerpt}</p>
-                </CardContent>
-                <CardFooter>
-                  <Button asChild variant="ghost" size="sm" className="text-primary">
-                    <a href={article.link}>Read more</a>
-                  </Button>
-                </CardFooter>
-              </Card>
+              <motion.div key={index} variants={itemFadeIn}>
+                <Card className="overflow-hidden hover-scale transition-all">
+                  <CardHeader className="bg-muted/20 pb-4">
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <FileQuestion className="h-5 w-5 text-primary" />
+                      {article.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <p className="text-muted-foreground">{article.excerpt}</p>
+                  </CardContent>
+                  <CardFooter>
+                    <Button asChild variant="ghost" size="sm" className="text-primary">
+                      <a href={article.link}>Read more</a>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
           
           <div className="text-center">
             <Button asChild variant="outline">
@@ -202,70 +225,79 @@ const HelpCenter: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="contact">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5 text-primary" />
-                  Email Support
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  For order inquiries, technical issues, or general questions.
-                </p>
-                <p className="font-medium">support@printify.com</p>
-                <p className="text-sm text-muted-foreground mt-1">Response time: 24-48 hours</p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" onClick={() => window.location.href = 'mailto:support@printify.com'}>
-                  Send Email
-                </Button>
-              </CardFooter>
-            </Card>
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={staggerChildren}
+          >
+            <motion.div variants={itemFadeIn}>
+              <Card className="hover-scale transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageCircle className="h-5 w-5 text-primary" />
+                    Email Support
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">
+                    For order inquiries, technical issues, or general questions.
+                  </p>
+                  <p className="font-medium">support@printify.com</p>
+                  <p className="text-sm text-muted-foreground mt-1">Response time: 24-48 hours</p>
+                </CardContent>
+                <CardFooter>
+                  <Button className="w-full" onClick={() => window.location.href = 'mailto:support@printify.com'}>
+                    Send Email
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
             
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Phone className="h-5 w-5 text-primary" />
-                  Phone Support
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  For urgent inquiries and immediate assistance.
-                </p>
-                <p className="font-medium">+91 98765 43210</p>
-                <p className="text-sm text-muted-foreground mt-1">Monday to Friday, 9am - 6pm IST</p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" onClick={() => window.location.href = 'tel:+919876543210'}>
-                  Call Now
-                </Button>
-              </CardFooter>
-            </Card>
+            <motion.div variants={itemFadeIn}>
+              <Card className="hover-scale transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Phone className="h-5 w-5 text-primary" />
+                    Phone Support
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">
+                    For urgent inquiries and immediate assistance.
+                  </p>
+                  <p className="font-medium">+91 98765 43210</p>
+                  <p className="text-sm text-muted-foreground mt-1">Monday to Friday, 9am - 6pm IST</p>
+                </CardContent>
+                <CardFooter>
+                  <Button className="w-full" onClick={() => window.location.href = 'tel:+919876543210'}>
+                    Call Now
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
             
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Package className="h-5 w-5 text-primary" />
-                  Order Issues
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  For problems with your delivered order or product quality.
-                </p>
-                <p className="font-medium">orders@printify.com</p>
-                <p className="text-sm text-muted-foreground mt-1">Please include your order number</p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" onClick={() => window.location.href = 'mailto:orders@printify.com'}>
-                  Report Issue
-                </Button>
-              </CardFooter>
-            </Card>
-          </div>
+            <motion.div variants={itemFadeIn}>
+              <Card className="hover-scale transition-all">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Package className="h-5 w-5 text-primary" />
+                    Order Issues
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">
+                    For problems with your delivered order or product quality.
+                  </p>
+                  <p className="font-medium">orders@printify.com</p>
+                  <p className="text-sm text-muted-foreground mt-1">Please include your order number</p>
+                </CardContent>
+                <CardFooter>
+                  <Button className="w-full" onClick={() => window.location.href = 'mailto:orders@printify.com'}>
+                    Report Issue
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          </motion.div>
           
           <div className="mt-8 text-center">
             <p className="text-muted-foreground mb-4">
@@ -280,7 +312,10 @@ const HelpCenter: React.FC = () => {
       
       <div className="my-12 border-t" />
       
-      <div className="text-center">
+      <motion.div 
+        className="text-center"
+        variants={fadeIn}
+      >
         <h2 className="text-2xl font-bold mb-2">Still need help?</h2>
         <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
           Our customer service team is ready to assist you with any questions or concerns you may have.
@@ -293,8 +328,17 @@ const HelpCenter: React.FC = () => {
             <a href="/faq">View FAQs</a>
           </Button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+      
+      <motion.div 
+        className="mt-8 text-center"
+        variants={fadeIn}
+      >
+        <p className="text-muted-foreground">
+          Check our <a href="https://blog.printify.com" className="text-primary hover:underline">blog</a> for printing tips, industry news and trends
+        </p>
+      </motion.div>
+    </motion.div>
   );
 };
 

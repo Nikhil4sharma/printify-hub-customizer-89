@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
-import { ShoppingCart, User, Menu, X } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, BookOpen } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
@@ -108,6 +108,15 @@ const Header: React.FC = () => {
                   ))}
                 </ul>
               </NavigationMenuContent>
+            </NavigationMenuItem>
+            
+            <NavigationMenuItem>
+              <Link to="https://blog.printify.com" target="_blank" className={navigationMenuTriggerStyle()}>
+                <span className="flex items-center gap-1">
+                  <BookOpen className="h-4 w-4" />
+                  Blog
+                </span>
+              </Link>
             </NavigationMenuItem>
             
             <NavigationMenuItem>
@@ -229,6 +238,16 @@ const Header: React.FC = () => {
                   {category.name}
                 </Link>
               ))}
+              
+              <Link 
+                to="https://blog.printify.com" 
+                className="nav-link flex items-center gap-2" 
+                onClick={closeMobileMenu}
+                target="_blank"
+              >
+                <BookOpen className="h-5 w-5 text-primary" />
+                Blog
+              </Link>
               
               <Link to="/contact" className="nav-link" onClick={closeMobileMenu}>Contact</Link>
               

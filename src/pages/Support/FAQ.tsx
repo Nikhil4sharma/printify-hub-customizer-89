@@ -7,7 +7,9 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { fadeIn, scaleIn } from '@/utils/transitions';
 
 const FAQ: React.FC = () => {
   const faqs = [
@@ -46,62 +48,107 @@ const FAQ: React.FC = () => {
   ];
 
   return (
-    <div className="container max-w-4xl mx-auto py-12 px-4">
-      <div className="flex items-center justify-center mb-8">
+    <motion.div 
+      className="container max-w-4xl mx-auto py-12 px-4"
+      initial="initial"
+      animate="animate"
+      variants={fadeIn}
+    >
+      <motion.div 
+        className="flex items-center justify-center mb-12"
+        variants={scaleIn}
+      >
         <div className="bg-primary/10 p-3 rounded-full mr-3">
           <HelpCircle className="h-8 w-8 text-primary" />
         </div>
         <h1 className="text-4xl font-bold">Frequently Asked Questions</h1>
-      </div>
+      </motion.div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl">Common Questions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Accordion type="single" collapsible className="w-full">
-            {faqs.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className="text-left">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </CardContent>
-      </Card>
+      <motion.div variants={fadeIn}>
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-xl flex items-center gap-2">
+              <HelpCircle className="h-5 w-5 text-primary" />
+              Common Questions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Accordion type="single" collapsible className="w-full">
+              {faqs.map((faq, index) => (
+                <AccordionItem key={index} value={`item-${index}`} className="border-b border-border">
+                  <AccordionTrigger className="text-left hover:text-primary transition-colors">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </CardContent>
+        </Card>
+      </motion.div>
 
-      <div className="mt-12 text-center">
+      <motion.div 
+        className="mt-16 text-center"
+        variants={fadeIn}
+        transition={{ delay: 0.4 }}
+      >
         <p className="text-muted-foreground mb-2">Still have questions?</p>
-        <h3 className="text-2xl font-bold mb-4">We're here to help</h3>
+        <h3 className="text-2xl font-bold mb-6">We're here to help</h3>
         <div className="flex flex-col sm:flex-row justify-center gap-6">
-          <Card className="flex-1">
+          <Card className="flex-1 hover-scale transition-all">
             <CardHeader>
-              <CardTitle className="text-lg">Contact Support</CardTitle>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <span className="bg-primary/10 p-1.5 rounded-full">
+                  <HelpCircle className="h-4 w-4 text-primary" />
+                </span>
+                Contact Support
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">Our customer service team is available from 9am to 6pm.</p>
               <p className="font-medium">Email: support@printify.com</p>
               <p className="font-medium">Phone: +91 98765 43210</p>
+              <div className="mt-4">
+                <a 
+                  href="/contact" 
+                  className="text-primary font-medium inline-flex items-center hover:underline"
+                >
+                  Contact us <ArrowRight className="h-4 w-4 ml-1" />
+                </a>
+              </div>
             </CardContent>
           </Card>
-          <Card className="flex-1">
+          <Card className="flex-1 hover-scale transition-all">
             <CardHeader>
-              <CardTitle className="text-lg">Visit Help Center</CardTitle>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <span className="bg-primary/10 p-1.5 rounded-full">
+                  <HelpCircle className="h-4 w-4 text-primary" />
+                </span>
+                Visit Help Center
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">Explore our detailed guides and resources.</p>
-              <a href="/help-center" className="text-primary font-medium hover:underline">
-                Browse Help Articles →
+              <a href="/help-center" className="text-primary font-medium inline-flex items-center hover:underline">
+                Browse Help Articles <ArrowRight className="h-4 w-4 ml-1" />
               </a>
+              <div className="mt-4">
+                <a 
+                  href="https://blog.printify.com/support" 
+                  className="text-primary font-medium inline-flex items-center hover:underline"
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  Read our blog <ArrowRight className="h-4 w-4 ml-1" />
+                </a>
+              </div>
             </CardContent>
           </Card>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

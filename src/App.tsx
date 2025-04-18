@@ -40,6 +40,12 @@ import PrivacyPolicy from "./pages/Support/PrivacyPolicy";
 import TermsOfService from "./pages/Support/TermsOfService";
 import HelpCenter from "./pages/Support/HelpCenter";
 
+// Blog pages
+import BlogLayout from "./pages/Blog/BlogLayout";
+import BlogHome from "./pages/Blog/BlogHome";
+import BlogPost from "./pages/Blog/BlogPost";
+import BlogCategory from "./pages/Blog/BlogCategory";
+
 // Create a new QueryClient instance outside the component
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,133 +70,166 @@ const AuthRoute = ({ children }: { children: React.ReactNode }) => {
   return isAuth ? <>{children}</> : <Navigate to="/login" />;
 };
 
-const App = () => (
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          <AdminAuthProvider>
-            <CartProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <Routes>
-                    {/* Customer facing routes */}
-                    <Route path="/" element={
-                      <MainLayout>
-                        <Index />
-                      </MainLayout>
-                    } />
-                    
-                    <Route path="/products/:category" element={
-                      <MainLayout>
-                        <ProductsListing />
-                      </MainLayout>
-                    } />
-                    
-                    <Route path="/products/:category/:id" element={
-                      <MainLayout>
-                        <ProductDetail />
-                      </MainLayout>
-                    } />
-                    
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
-                    
-                    <Route path="/cart" element={
-                      <MainLayout>
-                        <Cart />
-                      </MainLayout>
-                    } />
-                    
-                    <Route path="/checkout" element={
-                      <MainLayout>
-                        <Checkout />
-                      </MainLayout>
-                    } />
-                    
-                    {/* Support pages */}
-                    <Route path="/faq" element={
-                      <MainLayout>
-                        <FAQ />
-                      </MainLayout>
-                    } />
-                    
-                    <Route path="/shipping-policy" element={
-                      <MainLayout>
-                        <ShippingPolicy />
-                      </MainLayout>
-                    } />
-                    
-                    <Route path="/privacy-policy" element={
-                      <MainLayout>
-                        <PrivacyPolicy />
-                      </MainLayout>
-                    } />
-                    
-                    <Route path="/terms-of-service" element={
-                      <MainLayout>
-                        <TermsOfService />
-                      </MainLayout>
-                    } />
-                    
-                    <Route path="/help-center" element={
-                      <MainLayout>
-                        <HelpCenter />
-                      </MainLayout>
-                    } />
-                    
-                    {/* User account routes */}
-                    <Route path="/account" element={
-                      <AuthRoute>
+// Check if we're on the blog subdomain
+const isBlogSubdomain = () => {
+  const hostname = window.location.hostname;
+  return hostname.startsWith('blog.') || hostname.includes('blog.localhost');
+};
+
+const App = () => {
+  // Render blog routes if on blog subdomain
+  if (isBlogSubdomain()) {
+    return (
+      <React.StrictMode>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<BlogLayout><BlogHome /></BlogLayout>} />
+                  <Route path="/post/:slug" element={<BlogLayout><BlogPost /></BlogLayout>} />
+                  <Route path="/category/:category" element={<BlogLayout><BlogCategory /></BlogLayout>} />
+                  <Route path="*" element={<BlogLayout><NotFound /></BlogLayout>} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </React.StrictMode>
+    );
+  }
+
+  // Render main application routes
+  return (
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AuthProvider>
+            <AdminAuthProvider>
+              <CartProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <Routes>
+                      {/* Customer facing routes */}
+                      <Route path="/" element={
                         <MainLayout>
-                          <AccountLayout />
+                          <Index />
                         </MainLayout>
-                      </AuthRoute>
-                    }>
-                      <Route path="profile" element={<ProfilePage />} />
-                      <Route path="orders" element={<OrdersPage />} />
-                      <Route path="addresses" element={<AddressBook />} />
-                    </Route>
-                    
-                    <Route path="/contact" element={
-                      <MainLayout>
-                        <Contact />
-                      </MainLayout>
-                    } />
-                    
-                    {/* Admin routes */}
-                    <Route path="/admin/login" element={<AdminLogin />} />
-                    <Route path="/admin" element={
-                      <AdminRoute>
-                        <AdminLayout />
-                      </AdminRoute>
-                    }>
-                      <Route index element={<AdminDashboard />} />
-                      <Route path="users" element={<AdminUsers />} />
-                      <Route path="orders" element={<AdminOrders />} />
-                      <Route path="products" element={<AdminProducts />} />
-                      <Route path="categories" element={<AdminCategories />} />
-                      <Route path="settings" element={<AdminSettings />} />
-                      <Route path="profile" element={<AdminProfile />} />
-                    </Route>
-                    
-                    <Route path="*" element={
-                      <MainLayout>
-                        <NotFound />
-                      </MainLayout>
-                    } />
-                  </Routes>
-                </BrowserRouter>
-              </TooltipProvider>
-            </CartProvider>
-          </AdminAuthProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
-  </React.StrictMode>
-);
+                      } />
+                      
+                      <Route path="/products/:category" element={
+                        <MainLayout>
+                          <ProductsListing />
+                        </MainLayout>
+                      } />
+                      
+                      <Route path="/products/:category/:id" element={
+                        <MainLayout>
+                          <ProductDetail />
+                        </MainLayout>
+                      } />
+                      
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
+                      <Route path="/forgot-password" element={<ForgotPassword />} />
+                      
+                      <Route path="/cart" element={
+                        <MainLayout>
+                          <Cart />
+                        </MainLayout>
+                      } />
+                      
+                      <Route path="/checkout" element={
+                        <MainLayout>
+                          <Checkout />
+                        </MainLayout>
+                      } />
+                      
+                      {/* Support pages */}
+                      <Route path="/faq" element={
+                        <MainLayout>
+                          <FAQ />
+                        </MainLayout>
+                      } />
+                      
+                      <Route path="/shipping-policy" element={
+                        <MainLayout>
+                          <ShippingPolicy />
+                        </MainLayout>
+                      } />
+                      
+                      <Route path="/privacy-policy" element={
+                        <MainLayout>
+                          <PrivacyPolicy />
+                        </MainLayout>
+                      } />
+                      
+                      <Route path="/terms-of-service" element={
+                        <MainLayout>
+                          <TermsOfService />
+                        </MainLayout>
+                      } />
+                      
+                      <Route path="/help-center" element={
+                        <MainLayout>
+                          <HelpCenter />
+                        </MainLayout>
+                      } />
+                      
+                      {/* User account routes */}
+                      <Route path="/account" element={
+                        <AuthRoute>
+                          <MainLayout>
+                            <AccountLayout />
+                          </MainLayout>
+                        </AuthRoute>
+                      }>
+                        <Route path="profile" element={<ProfilePage />} />
+                        <Route path="orders" element={<OrdersPage />} />
+                        <Route path="addresses" element={<AddressBook />} />
+                      </Route>
+                      
+                      <Route path="/contact" element={
+                        <MainLayout>
+                          <Contact />
+                        </MainLayout>
+                      } />
+                      
+                      {/* Admin routes */}
+                      <Route path="/admin/login" element={<AdminLogin />} />
+                      <Route path="/admin" element={
+                        <AdminRoute>
+                          <AdminLayout />
+                        </AdminRoute>
+                      }>
+                        <Route index element={<AdminDashboard />} />
+                        <Route path="users" element={<AdminUsers />} />
+                        <Route path="orders" element={<AdminOrders />} />
+                        <Route path="products" element={<AdminProducts />} />
+                        <Route path="categories" element={<AdminCategories />} />
+                        <Route path="settings" element={<AdminSettings />} />
+                        <Route path="profile" element={<AdminProfile />} />
+                      </Route>
+                      
+                      <Route path="*" element={
+                        <MainLayout>
+                          <NotFound />
+                        </MainLayout>
+                      } />
+                    </Routes>
+                  </BrowserRouter>
+                </TooltipProvider>
+              </CartProvider>
+            </AdminAuthProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
+  );
+};
 
 export default App;
