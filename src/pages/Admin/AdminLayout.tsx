@@ -19,6 +19,7 @@ import {
 import { useAdminAuth } from '@/context/AdminAuthContext';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 // These interfaces are prepared for real data integration
 interface AdminPageData {
@@ -109,58 +110,61 @@ const AdminLayout = () => {
             </div>
           )}
           
-          <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
-            {navItems.map((item) => (
+          {/* Add ScrollArea component for navigation */}
+          <ScrollArea className="flex-1">
+            <nav className="px-2 py-4 space-y-1">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={cn(
+                    "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                    location.pathname === item.path
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-muted"
+                  )}
+                >
+                  <item.icon className="h-5 w-5 mr-3" />
+                  {item.label}
+                </Link>
+              ))}
+              
+              {/* Profile Link */}
               <Link
-                key={item.path}
-                to={item.path}
+                to="/admin/profile"
                 className={cn(
                   "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  location.pathname === item.path
+                  location.pathname === '/admin/profile'
                     ? "bg-primary text-primary-foreground"
                     : "hover:bg-muted"
                 )}
               >
-                <item.icon className="h-5 w-5 mr-3" />
-                {item.label}
+                <User className="h-5 w-5 mr-3" />
+                Profile
               </Link>
-            ))}
-            
-            {/* Profile Link */}
-            <Link
-              to="/admin/profile"
-              className={cn(
-                "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                location.pathname === '/admin/profile'
-                  ? "bg-primary text-primary-foreground"
-                  : "hover:bg-muted"
-              )}
-            >
-              <User className="h-5 w-5 mr-3" />
-              Profile
-            </Link>
-            
-            {/* Data Management Section - for future functionality */}
-            <div className="pt-4 mt-4 border-t border-border">
-              <p className="px-3 text-xs font-medium text-muted-foreground mb-2">Data Management</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full justify-start text-xs mb-2" 
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export Data
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full justify-start text-xs" 
-              >
-                <UploadCloud className="h-4 w-4 mr-2" />
-                Import Data
-              </Button>
-            </div>
-          </nav>
+              
+              {/* Data Management Section - for future functionality */}
+              <div className="pt-4 mt-4 border-t border-border">
+                <p className="px-3 text-xs font-medium text-muted-foreground mb-2">Data Management</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full justify-start text-xs mb-2" 
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export Data
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full justify-start text-xs" 
+                >
+                  <UploadCloud className="h-4 w-4 mr-2" />
+                  Import Data
+                </Button>
+              </div>
+            </nav>
+          </ScrollArea>
 
           <div className="p-4 border-t border-border">
             <Button 
