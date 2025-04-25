@@ -26,9 +26,7 @@ import {
   Edit, 
   Trash2, 
   ImagePlus,
-  Download,
   FileImage,
-  File,
   IndianRupee,
   Eye,
   CheckCircle2,
@@ -291,7 +289,6 @@ const AdminProducts = () => {
               <TableHead>Category</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Featured</TableHead>
-              <TableHead>Files</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -313,15 +310,6 @@ const AdminProducts = () => {
                       <XCircle className="h-3 w-3 mr-1" />
                       No
                     </Badge>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {product.customerFiles.length > 0 ? (
-                    <Badge variant="secondary" className="font-normal">
-                      {product.customerFiles.length} file(s)
-                    </Badge>
-                  ) : (
-                    <span className="text-muted-foreground text-sm">No files</span>
                   )}
                 </TableCell>
                 <TableCell className="text-right">
@@ -352,11 +340,10 @@ const AdminProducts = () => {
           </DialogHeader>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-5 mb-4 w-full">
+            <TabsList className="grid grid-cols-4 mb-4 w-full">
               <TabsTrigger value="general">General</TabsTrigger>
               <TabsTrigger value="options">Options</TabsTrigger>
               <TabsTrigger value="images">Images</TabsTrigger>
-              <TabsTrigger value="files">Customer Files</TabsTrigger>
               <TabsTrigger value="advanced">Advanced</TabsTrigger>
             </TabsList>
             
@@ -582,39 +569,6 @@ const AdminProducts = () => {
                   </div>
                 ))}
               </div>
-            </TabsContent>
-            
-            <TabsContent value="files" className="space-y-4">
-              <Label>Customer Files</Label>
-              {currentProduct?.customerFiles && currentProduct.customerFiles.length > 0 ? (
-                <div className="space-y-3 border rounded-md p-4">
-                  {currentProduct.customerFiles.map((file: any) => (
-                    <div key={file.id} className="flex items-center justify-between text-sm border-b pb-3 last:border-0 last:pb-0">
-                      <div className="flex items-center gap-3">
-                        {getFileIcon(file.fileName)}
-                        <div>
-                          <p className="font-medium">{file.fileName}</p>
-                          <p className="text-xs text-muted-foreground">
-                            Uploaded by {file.customerName} on {file.uploadDate}
-                          </p>
-                        </div>
-                      </div>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleDownloadFile(file.fileName)}
-                      >
-                        <Download className="h-4 w-4 mr-1" />
-                        Download
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-sm text-muted-foreground p-8 border rounded-md text-center">
-                  No customer files uploaded for this product
-                </div>
-              )}
             </TabsContent>
             
             <TabsContent value="advanced" className="space-y-4">
