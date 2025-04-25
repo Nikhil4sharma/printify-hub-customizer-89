@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fadeIn } from '@/utils/transitions';
+import { ImageIcon } from 'lucide-react';
 
 interface Category {
   id: string;
@@ -17,7 +18,7 @@ const categories: Category[] = [
     id: 'business-cards',
     name: 'Business Cards',
     description: 'Make a lasting impression with premium business cards',
-    image: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2072&q=80',
+    image: '/placeholder.svg', // Using placeholder until admin updates
     url: '/products/business-cards',
   },
   {
@@ -78,12 +79,22 @@ const Categories: React.FC = () => {
               >
                 <div className="relative rounded-xl overflow-hidden">
                   <div className="aspect-[4/3] overflow-hidden bg-muted">
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
+                    {category.image ? (
+                      <img
+                        src={category.image}
+                        alt={category.name}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = '/placeholder.svg';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-muted">
+                        <ImageIcon className="w-12 h-12 text-muted-foreground" />
+                      </div>
+                    )}
                   </div>
                   
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6 opacity-100 transition-opacity duration-300">
@@ -101,4 +112,3 @@ const Categories: React.FC = () => {
 };
 
 export default Categories;
-

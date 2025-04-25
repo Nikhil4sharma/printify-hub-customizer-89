@@ -219,6 +219,16 @@ const AdminProducts = () => {
     return <FileImage className="h-4 w-4" />;
   };
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // In a real app, this would upload to your storage and return a URL
+      // For now, we'll use a local URL
+      const imageUrl = URL.createObjectURL(file);
+      handleImageChange(productImages.length, imageUrl);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -518,16 +528,25 @@ const AdminProducts = () => {
             <TabsContent value="images" className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label>Product Images (Up to 4)</Label>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleAddImage}
-                  disabled={productImages.length >= 4}
-                >
-                  <ImagePlus className="h-4 w-4 mr-2" />
-                  Add Image
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => document.getElementById('image-upload')?.click()}
+                    disabled={productImages.length >= 4}
+                  >
+                    <ImagePlus className="h-4 w-4 mr-2" />
+                    Upload Image
+                  </Button>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
+                </div>
               </div>
               
               <div className="space-y-3">
@@ -546,6 +565,10 @@ const AdminProducts = () => {
                           src={image} 
                           alt={`Product image ${index + 1}`}
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/placeholder.svg';
+                          }}
                         />
                       </div>
                     )}
