@@ -28,7 +28,6 @@ import {
   FolderPlus,
   Search,
   Image,
-  SlidersHorizontal,
   ArrowUpDown,
   Tag,
   Filter
@@ -82,17 +81,19 @@ const AdminCategories = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isSingleDeleteDialogOpen, setIsSingleDeleteDialogOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<any>(null);
   const [sortBy, setSortBy] = useState('name-asc');
   
   // Mock category data - would be fetched from API in a real application
-  const categories = [
-    { id: 1, name: 'Business Cards', products: 12, image: 'businesscard.jpg', featured: true, description: 'Professional business cards for your brand identity', lastUpdated: '2023-10-15' },
-    { id: 2, name: 'Stationery', products: 18, image: 'stationery.jpg', featured: true, description: 'Complete stationery solutions for your business', lastUpdated: '2023-11-03' },
-    { id: 3, name: 'Carry Bags', products: 8, image: 'carrybags.jpg', featured: false, description: 'Custom printed paper bags for retail and promotions', lastUpdated: '2023-09-22' },
-    { id: 4, name: 'Boxes', products: 15, image: 'boxes.jpg', featured: true, description: 'Packaging boxes for products of all sizes', lastUpdated: '2023-12-01' },
-    { id: 5, name: 'Posters', products: 7, image: 'posters.jpg', featured: false, description: 'High-quality printed posters in various sizes', lastUpdated: '2023-11-15' },
-    { id: 6, name: 'Banners', products: 10, image: 'banners.jpg', featured: true, description: 'Durable outdoor and indoor banners', lastUpdated: '2023-10-28' },
-  ];
+  const [categories, setCategories] = useState([
+    { id: 1, name: 'Business Cards', products: 12, image: 'businesscard.jpg', featured: true, description: 'Professional business cards for your brand identity', lastUpdated: '2023-10-15', status: 'active' },
+    { id: 2, name: 'Stationery', products: 18, image: 'stationery.jpg', featured: true, description: 'Complete stationery solutions for your business', lastUpdated: '2023-11-03', status: 'active' },
+    { id: 3, name: 'Carry Bags', products: 8, image: 'carrybags.jpg', featured: false, description: 'Custom printed paper bags for retail and promotions', lastUpdated: '2023-09-22', status: 'active' },
+    { id: 4, name: 'Boxes', products: 15, image: 'boxes.jpg', featured: true, description: 'Packaging boxes for products of all sizes', lastUpdated: '2023-12-01', status: 'active' },
+    { id: 5, name: 'Posters', products: 7, image: 'posters.jpg', featured: false, description: 'High-quality printed posters in various sizes', lastUpdated: '2023-11-15', status: 'draft' },
+    { id: 6, name: 'Banners', products: 10, image: 'banners.jpg', featured: true, description: 'Durable outdoor and indoor banners', lastUpdated: '2023-10-28', status: 'active' },
+  ]);
 
   const filteredCategories = categories
     .filter(category => 
@@ -120,14 +121,84 @@ const AdminCategories = () => {
     setIsEditOpen(true);
   };
 
-  const handleSaveCategory = () => {
-    // In a real app, this would update the category in the database
+  const handleDeleteCategory = (category: any) => {
+    setCategoryToDelete(category);
+    setIsSingleDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteCategory = () => {
+    if (!categoryToDelete) return;
+    
+    // In a real app, this would delete the category from the database
+    setCategories(prev => prev.filter(cat => cat.id !== categoryToDelete.id));
+    
     toast({
-      title: currentCategory ? "Category updated" : "Category created",
-      description: currentCategory 
-        ? "The category has been successfully updated" 
-        : "The new category has been successfully created",
+      title: "Category deleted",
+      description: `The category "${categoryToDelete.name}" has been deleted.`,
+      variant: "destructive",
     });
+    
+    setIsSingleDeleteDialogOpen(false);
+    setCategoryToDelete(null);
+  };
+
+  const handleSaveCategory = () => {
+    // Get form values
+    const formName = (document.getElementById('category-name') as HTMLInputElement)?.value;
+    const formDescription = (document.getElementById('category-description') as HTMLTextAreaElement)?.value;
+    const formFeatured = (document.getElementById('featured') as HTMLInputElement)?.checked;
+    const formStatus = (document.getElementById('category-status') as HTMLSelectElement)?.value;
+    
+    if (!formName) {
+      toast({
+        title: "Missing information",
+        description: "Please provide a category name.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (currentCategory) {
+      // Update existing category
+      setCategories(prev => prev.map(cat => 
+        cat.id === currentCategory.id 
+          ? { 
+              ...cat, 
+              name: formName,
+              description: formDescription || cat.description,
+              featured: formFeatured !== undefined ? formFeatured : cat.featured,
+              image: categoryImage || cat.image,
+              lastUpdated: new Date().toISOString().split('T')[0],
+              status: formStatus || cat.status
+            } 
+          : cat
+      ));
+      
+      toast({
+        title: "Category updated",
+        description: "The category has been successfully updated.",
+      });
+    } else {
+      // Create new category
+      const newCategory = {
+        id: categories.length + 1,
+        name: formName,
+        description: formDescription || '',
+        featured: formFeatured || false,
+        image: categoryImage || '',
+        products: 0,
+        lastUpdated: new Date().toISOString().split('T')[0],
+        status: formStatus || 'draft'
+      };
+      
+      setCategories(prev => [...prev, newCategory]);
+      
+      toast({
+        title: "Category created",
+        description: "The new category has been successfully created.",
+      });
+    }
+    
     setIsEditOpen(false);
   };
 
@@ -139,7 +210,6 @@ const AdminCategories = () => {
     );
   };
 
-  // Fixed this function to accept a boolean or string value instead of an event
   const handleSelectAllCategories = (checked: boolean | string) => {
     if (checked) {
       setSelectedCategories(categories.map(cat => cat.id));
@@ -150,6 +220,8 @@ const AdminCategories = () => {
 
   const handleBulkDelete = () => {
     // In a real application, this would delete multiple categories
+    setCategories(prev => prev.filter(cat => !selectedCategories.includes(cat.id)));
+    
     toast({
       title: "Categories deleted",
       description: `${selectedCategories.length} categories have been deleted.`,
@@ -157,6 +229,34 @@ const AdminCategories = () => {
     });
     setSelectedCategories([]);
     setIsDeleteDialogOpen(false);
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // In a real app, this would upload to your storage and return a URL
+      // For now, we'll use a local URL
+      const imageUrl = URL.createObjectURL(file);
+      setCategoryImage(imageUrl);
+      
+      toast({
+        title: "Image uploaded",
+        description: "Image has been temporarily uploaded.",
+      });
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <Badge className="bg-green-500">Active</Badge>;
+      case 'draft':
+        return <Badge variant="outline">Draft</Badge>;
+      case 'archived':
+        return <Badge variant="secondary">Archived</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
   };
 
   return (
@@ -216,6 +316,26 @@ const AdminCategories = () => {
                       <Label htmlFor="with-products">With products</Label>
                     </div>
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Status</DropdownMenuLabel>
+                  <DropdownMenuItem>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="status-active" />
+                      <Label htmlFor="status-active">Active</Label>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="status-draft" />
+                      <Label htmlFor="status-draft">Draft</Label>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="status-archived" />
+                      <Label htmlFor="status-archived">Archived</Label>
+                    </div>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
 
@@ -259,10 +379,10 @@ const AdminCategories = () => {
                       onCheckedChange={handleSelectAllCategories}
                     />
                   </TableHead>
-                  <TableHead className="w-[80px]">ID</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Products</TableHead>
                   <TableHead>Image</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Featured</TableHead>
                   <TableHead>Last Updated</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -287,7 +407,6 @@ const AdminCategories = () => {
                           onCheckedChange={() => handleSelectCategory(category.id)}
                         />
                       </TableCell>
-                      <TableCell>{category.id}</TableCell>
                       <TableCell className="font-medium">
                         <div className="flex flex-col">
                           <span>{category.name}</span>
@@ -306,6 +425,10 @@ const AdminCategories = () => {
                               src={`/placeholder.svg`} 
                               alt={category.name}
                               className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = '/placeholder.svg';
+                              }}
                             />
                           </div>
                         ) : (
@@ -313,6 +436,9 @@ const AdminCategories = () => {
                             <Image className="h-5 w-5" />
                           </div>
                         )}
+                      </TableCell>
+                      <TableCell>
+                        {getStatusBadge(category.status)}
                       </TableCell>
                       <TableCell>
                         {category.featured ? (
@@ -365,7 +491,12 @@ const AdminCategories = () => {
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="text-destructive">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="text-destructive"
+                                  onClick={() => handleDeleteCategory(category)}
+                                >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
@@ -393,36 +524,52 @@ const AdminCategories = () => {
           </DialogHeader>
           
           <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid grid-cols-3 mb-4">
+            <TabsList className="grid grid-cols-2 mb-4">
               <TabsTrigger value="general">General</TabsTrigger>
               <TabsTrigger value="image">Image</TabsTrigger>
-              <TabsTrigger value="seo">SEO</TabsTrigger>
             </TabsList>
             
             <TabsContent value="general" className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Category Name</Label>
+                <Label htmlFor="category-name">Category Name*</Label>
                 <Input 
-                  id="name" 
+                  id="category-name" 
                   defaultValue={currentCategory?.name} 
                   placeholder="Enter category name"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="category-description">Description</Label>
                 <Textarea 
-                  id="description" 
+                  id="category-description" 
                   rows={4}
                   defaultValue={currentCategory?.description}
                   placeholder="Category description..."
                 />
               </div>
               
+              <div className="space-y-2">
+                <Label htmlFor="category-status">Status</Label>
+                <Select defaultValue={currentCategory?.status || "draft"}>
+                  <SelectTrigger id="category-status">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="archived">Archived</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Only active categories are displayed to customers
+                </p>
+              </div>
+              
               <div className="flex items-center space-x-2">
                 <Checkbox 
                   id="featured" 
-                  checked={currentCategory?.featured}
+                  defaultChecked={currentCategory?.featured}
                 />
                 <Label htmlFor="featured">Featured category (shown on homepage)</Label>
               </div>
@@ -450,6 +597,10 @@ const AdminCategories = () => {
                         src={`/placeholder.svg`} 
                         alt="Category"
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = '/placeholder.svg';
+                        }}
                       />
                     ) : (
                       <div className="flex flex-col items-center text-muted-foreground">
@@ -461,56 +612,22 @@ const AdminCategories = () => {
                 </div>
                 
                 <div className="mt-4">
-                  <Button variant="outline" className="w-full">
+                  <input
+                    id="category-image-upload"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => document.getElementById('category-image-upload')?.click()}
+                  >
                     <ImagePlus className="h-4 w-4 mr-2" />
                     Upload Image
                   </Button>
                 </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="seo" className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="seo-title">SEO Title</Label>
-                <Input 
-                  id="seo-title" 
-                  placeholder="SEO optimized title"
-                  defaultValue={currentCategory?.name}
-                />
-                <p className="text-xs text-muted-foreground">
-                  The title that appears in search engine results.
-                </p>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="seo-description">SEO Description</Label>
-                <Textarea 
-                  id="seo-description" 
-                  rows={3}
-                  placeholder="SEO optimized description"
-                  defaultValue={currentCategory?.description}
-                />
-                <p className="text-xs text-muted-foreground">
-                  A brief description that appears in search engine results.
-                </p>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="custom-url">Custom URL</Label>
-                <div className="flex items-center">
-                  <span className="text-muted-foreground px-3 border-y border-l rounded-l-md h-10 flex items-center bg-muted">
-                    yourstore.com/categories/
-                  </span>
-                  <Input 
-                    id="custom-url" 
-                    placeholder="e.g., business-cards"
-                    defaultValue={currentCategory?.name?.toLowerCase().replace(/ /g, '-')}
-                    className="rounded-l-none"
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Leave empty to use the category name
-                </p>
               </div>
             </TabsContent>
           </Tabs>
@@ -526,7 +643,7 @@ const AdminCategories = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Bulk Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -549,6 +666,34 @@ const AdminCategories = () => {
             </DialogClose>
             <Button type="submit" variant="destructive" onClick={handleBulkDelete}>
               Yes, Delete Categories
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Single Category Delete Confirmation Dialog */}
+      <Dialog open={isSingleDeleteDialogOpen} onOpenChange={setIsSingleDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="h-5 w-5" />
+              Delete Category
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <p>Are you sure you want to delete the category "{categoryToDelete?.name}"?</p>
+            <p className="text-muted-foreground text-sm mt-2">This action cannot be undone. Products in this category may become uncategorized.</p>
+          </div>
+          
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="submit" variant="destructive" onClick={confirmDeleteCategory}>
+              Yes, Delete Category
             </Button>
           </DialogFooter>
         </DialogContent>

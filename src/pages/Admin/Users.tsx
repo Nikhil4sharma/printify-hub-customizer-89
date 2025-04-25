@@ -30,7 +30,8 @@ import {
   Phone,
   UserCog,
   Trash2,
-  AlertCircle
+  AlertCircle,
+  ShieldCheck
 } from 'lucide-react';
 import { 
   Dialog,
@@ -50,6 +51,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const AdminUsers = () => {
   const { toast } = useToast();
@@ -58,17 +66,19 @@ const AdminUsers = () => {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isSingleDeleteDialogOpen, setIsSingleDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<any>(null);
 
   // Mock user data - would be fetched from API in a real application
-  const users = [
-    { id: 1, name: 'John Smith', email: 'john@example.com', mobile: '+1234567890', orders: 12, active: true },
-    { id: 2, name: 'Sarah Johnson', email: 'sarah@example.com', mobile: '+1987654321', orders: 8, active: true },
-    { id: 3, name: 'Michael Brown', email: 'michael@example.com', mobile: '+1122334455', orders: 5, active: false },
-    { id: 4, name: 'Emma Wilson', email: 'emma@example.com', mobile: '+1567891234', orders: 15, active: true },
-    { id: 5, name: 'David Lee', email: 'david@example.com', mobile: '+1321654987', orders: 3, active: true },
-    { id: 6, name: 'Jennifer Taylor', email: 'jennifer@example.com', mobile: '+1654789321', orders: 7, active: true },
-    { id: 7, name: 'Robert Miller', email: 'robert@example.com', mobile: '+1789456123', orders: 0, active: false },
-  ];
+  const [users, setUsers] = useState([
+    { id: 1, name: 'John Smith', email: 'john@example.com', mobile: '+1234567890', orders: 12, active: true, role: 'customer' },
+    { id: 2, name: 'Sarah Johnson', email: 'sarah@example.com', mobile: '+1987654321', orders: 8, active: true, role: 'customer' },
+    { id: 3, name: 'Michael Brown', email: 'michael@example.com', mobile: '+1122334455', orders: 5, active: false, role: 'staff' },
+    { id: 4, name: 'Emma Wilson', email: 'emma@example.com', mobile: '+1567891234', orders: 15, active: true, role: 'customer' },
+    { id: 5, name: 'David Lee', email: 'david@example.com', mobile: '+1321654987', orders: 3, active: true, role: 'staff' },
+    { id: 6, name: 'Jennifer Taylor', email: 'jennifer@example.com', mobile: '+1654789321', orders: 7, active: true, role: 'customer' },
+    { id: 7, name: 'Robert Miller', email: 'robert@example.com', mobile: '+1789456123', orders: 0, active: false, role: 'customer' },
+  ]);
 
   const filteredUsers = users.filter(user => 
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -81,7 +91,12 @@ const AdminUsers = () => {
   };
 
   const handleToggleUserStatus = (userId: number, currentStatus: boolean) => {
-    // In a real application, this would update the user status in the database
+    // Update the user status in our state
+    setUsers(prev => prev.map(user => 
+      user.id === userId ? { ...user, active: !currentStatus } : user
+    ));
+    
+    // Show a toast notification
     toast({
       title: `User ${currentStatus ? 'deactivated' : 'activated'}`,
       description: `User status has been changed successfully.`,
@@ -89,12 +104,90 @@ const AdminUsers = () => {
   };
 
   const handleSaveUser = () => {
+    if (!currentUser) return;
+    
+    const formName = (document.getElementById('name') as HTMLInputElement)?.value;
+    const formEmail = (document.getElementById('email') as HTMLInputElement)?.value;
+    const formPhone = (document.getElementById('phone') as HTMLInputElement)?.value;
+    const formActive = (document.getElementById('user-status') as HTMLInputElement)?.checked;
+    const formRole = (document.getElementById('user-role') as HTMLSelectElement)?.value;
+    
     // In a real application, this would update the user data in the database
+    setUsers(prev => prev.map(user => 
+      user.id === currentUser.id 
+        ? { 
+            ...user, 
+            name: formName || user.name,
+            email: formEmail || user.email,
+            mobile: formPhone || user.mobile,
+            active: formActive !== undefined ? formActive : user.active,
+            role: formRole || user.role
+          } 
+        : user
+    ));
+    
     toast({
       title: "User updated",
       description: "User information has been updated successfully.",
     });
     setIsUserDialogOpen(false);
+  };
+  
+  const handleCreateUser = () => {
+    const formName = (document.getElementById('name') as HTMLInputElement)?.value;
+    const formEmail = (document.getElementById('email') as HTMLInputElement)?.value;
+    const formPhone = (document.getElementById('phone') as HTMLInputElement)?.value;
+    const formActive = (document.getElementById('user-status') as HTMLInputElement)?.checked;
+    const formRole = (document.getElementById('user-role') as HTMLSelectElement)?.value;
+    
+    if (!formName || !formEmail) {
+      toast({
+        title: "Missing information",
+        description: "Please provide at least a name and email.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // In a real application, this would create a user in the database
+    const newUser = {
+      id: users.length + 1,
+      name: formName,
+      email: formEmail,
+      mobile: formPhone || '',
+      orders: 0,
+      active: formActive !== undefined ? formActive : true,
+      role: formRole || 'customer'
+    };
+    
+    setUsers(prev => [...prev, newUser]);
+    
+    toast({
+      title: "User created",
+      description: "New user has been created successfully.",
+    });
+    setIsUserDialogOpen(false);
+  };
+
+  const handleDeleteSingleUser = (user: any) => {
+    setUserToDelete(user);
+    setIsSingleDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteSingleUser = () => {
+    if (!userToDelete) return;
+    
+    // In a real application, this would delete the user from the database
+    setUsers(prev => prev.filter(user => user.id !== userToDelete.id));
+    
+    toast({
+      title: "User deleted",
+      description: "The user has been deleted successfully.",
+      variant: "destructive",
+    });
+    
+    setIsSingleDeleteDialogOpen(false);
+    setUserToDelete(null);
   };
 
   const handleSelectUser = (userId: number) => {
@@ -105,7 +198,6 @@ const AdminUsers = () => {
     );
   };
 
-  // Fixed this function to accept a boolean or string value instead of an event
   const handleSelectAllUsers = (checked: boolean | string) => {
     if (checked) {
       setSelectedUsers(users.map(user => user.id));
@@ -116,6 +208,8 @@ const AdminUsers = () => {
 
   const handleBulkDelete = () => {
     // In a real application, this would delete multiple users
+    setUsers(prev => prev.filter(user => !selectedUsers.includes(user.id)));
+    
     toast({
       title: "Users deleted",
       description: `${selectedUsers.length} users have been deleted.`,
@@ -123,6 +217,22 @@ const AdminUsers = () => {
     });
     setSelectedUsers([]);
     setIsDeleteDialogOpen(false);
+  };
+  
+  const handleAddUser = () => {
+    setCurrentUser(null);
+    setIsUserDialogOpen(true);
+  };
+
+  const getRoleBadge = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return <Badge className="bg-red-500">Admin</Badge>;
+      case 'staff':
+        return <Badge className="bg-blue-500">Staff</Badge>;
+      default:
+        return <Badge variant="outline">Customer</Badge>;
+    }
   };
 
   return (
@@ -134,7 +244,7 @@ const AdminUsers = () => {
             <CardDescription>View and manage your customer accounts</CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <Button onClick={() => setIsUserDialogOpen(true)} className="whitespace-nowrap">
+            <Button onClick={handleAddUser} className="whitespace-nowrap">
               <UserPlus className="h-4 w-4 mr-2" />
               Add User
             </Button>
@@ -182,6 +292,26 @@ const AdminUsers = () => {
                       <Label htmlFor="with-orders">With orders</Label>
                     </div>
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Filter by role</DropdownMenuLabel>
+                  <DropdownMenuItem>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="role-customer" />
+                      <Label htmlFor="role-customer">Customers</Label>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="role-staff" />
+                      <Label htmlFor="role-staff">Staff</Label>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="role-admin" />
+                      <Label htmlFor="role-admin">Admins</Label>
+                    </div>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
 
@@ -215,6 +345,7 @@ const AdminUsers = () => {
                   </TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Contact</TableHead>
+                  <TableHead className="text-center">Role</TableHead>
                   <TableHead className="text-center">Orders</TableHead>
                   <TableHead className="text-center">Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -223,7 +354,7 @@ const AdminUsers = () => {
               <TableBody>
                 {filteredUsers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
+                    <TableCell colSpan={7} className="text-center py-8">
                       <div className="flex flex-col items-center justify-center text-muted-foreground">
                         <Search className="h-8 w-8 mb-2" />
                         <p>No users found matching your search criteria.</p>
@@ -263,6 +394,9 @@ const AdminUsers = () => {
                         </div>
                       </TableCell>
                       <TableCell className="text-center">
+                        {getRoleBadge(user.role)}
+                      </TableCell>
+                      <TableCell className="text-center">
                         {user.orders > 0 ? (
                           <Badge variant="secondary">{user.orders}</Badge>
                         ) : (
@@ -293,7 +427,10 @@ const AdminUsers = () => {
                               View orders
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive">
+                            <DropdownMenuItem 
+                              className="text-destructive"
+                              onClick={() => handleDeleteSingleUser(user)}
+                            >
                               Delete user
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -353,12 +490,52 @@ const AdminUsers = () => {
             </div>
             
             <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="user-role" className="text-right">
+                Role
+              </Label>
+              <Select defaultValue={currentUser?.role || "customer"}>
+                <SelectTrigger id="user-role" className="col-span-3">
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="customer">Customer</SelectItem>
+                  <SelectItem value="staff">Staff</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
               <Label className="text-right">Status</Label>
               <div className="flex items-center space-x-2 col-span-3">
                 <Switch id="user-status" defaultChecked={currentUser?.active} />
                 <Label htmlFor="user-status">Account active</Label>
               </div>
             </div>
+            
+            {currentUser?.role === 'staff' && (
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label className="text-right pt-2">Permissions</Label>
+                <div className="space-y-2 col-span-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="perm-orders" defaultChecked />
+                    <Label htmlFor="perm-orders">View orders</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="perm-customers" defaultChecked />
+                    <Label htmlFor="perm-customers">View customers</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="perm-products" />
+                    <Label htmlFor="perm-products">Manage products</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="perm-settings" />
+                    <Label htmlFor="perm-settings">Access settings</Label>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           
           <DialogFooter>
@@ -367,14 +544,17 @@ const AdminUsers = () => {
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" onClick={handleSaveUser}>
-              Save Changes
+            <Button 
+              type="submit" 
+              onClick={currentUser ? handleSaveUser : handleCreateUser}
+            >
+              {currentUser ? 'Save Changes' : 'Create User'}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Bulk Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -397,6 +577,34 @@ const AdminUsers = () => {
             </DialogClose>
             <Button type="submit" variant="destructive" onClick={handleBulkDelete}>
               Delete Users
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Single User Delete Confirmation Dialog */}
+      <Dialog open={isSingleDeleteDialogOpen} onOpenChange={setIsSingleDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="h-5 w-5" />
+              Delete User
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <p>Are you sure you want to delete the user "{userToDelete?.name}"?</p>
+            <p className="text-muted-foreground text-sm mt-2">This action cannot be undone.</p>
+          </div>
+          
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="submit" variant="destructive" onClick={confirmDeleteSingleUser}>
+              Yes, Delete User
             </Button>
           </DialogFooter>
         </DialogContent>
