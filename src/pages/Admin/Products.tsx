@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Table, 
@@ -76,10 +77,6 @@ const AdminProducts = () => {
       treatmentOptions: ['Spot UV Single Side', 'Spot UV Both Sides', 'None'],
       quantityOptions: [100, 250, 500, 750, 1000, 2000, 5000, 10000],
       images: ['https://images.unsplash.com/photo-1589998059171-988d887df646', 'https://images.unsplash.com/photo-1609209120115-619e31588ab8'],
-      customerFiles: [
-        { id: 'file1', fileName: 'business_card_design.pdf', customerName: 'Rahul Sharma', uploadDate: '2023-05-15' },
-        { id: 'file2', fileName: 'logo_for_cards.ai', customerName: 'Priya Patel', uploadDate: '2023-05-20' }
-      ]
     },
     { 
       id: 2, 
@@ -94,9 +91,6 @@ const AdminProducts = () => {
       treatmentOptions: ['None'],
       quantityOptions: [100, 250, 500, 1000, 2000],
       images: ['https://images.unsplash.com/photo-1568205631288-1469d8298ce0'],
-      customerFiles: [
-        { id: 'file3', fileName: 'letterhead_final.pdf', customerName: 'Amit Singh', uploadDate: '2023-05-18' }
-      ]
     },
     { 
       id: 3, 
@@ -111,7 +105,6 @@ const AdminProducts = () => {
       treatmentOptions: ['None', 'Lamination'],
       quantityOptions: [100, 250, 500, 1000],
       images: ['https://images.unsplash.com/photo-1591197172062-c718f82aba20'],
-      customerFiles: []
     },
     { 
       id: 4, 
@@ -126,9 +119,6 @@ const AdminProducts = () => {
       treatmentOptions: ['Foiling Single Side', 'Foiling Both Sides', 'None'],
       quantityOptions: [100, 250, 500, 750, 1000, 2000, 5000],
       images: ['https://images.unsplash.com/photo-1616793944642-81493deb9b5e'],
-      customerFiles: [
-        { id: 'file5', fileName: 'gold_foil_design.ai', customerName: 'Vikram Patel', uploadDate: '2023-05-25' }
-      ]
     },
     { 
       id: 6, 
@@ -137,7 +127,6 @@ const AdminProducts = () => {
       price: '₹450.00',  
       variants: 4, 
       images: ['https://images.unsplash.com/photo-1579213838826-dabf29071388'],
-      customerFiles: []
     },
     { 
       id: 7, 
@@ -146,9 +135,6 @@ const AdminProducts = () => {
       price: '₹850.00',  
       variants: 5, 
       images: ['https://images.unsplash.com/photo-1513201099705-a9746e1e201f'],
-      customerFiles: [
-        { id: 'file6', fileName: 'gift_box_artwork.pdf', customerName: 'Sanjay Mehta', uploadDate: '2023-05-30' }
-      ]
     },
   ];
 
@@ -208,13 +194,6 @@ const AdminProducts = () => {
       title: "Downloading file",
       description: `Downloading ${fileName}`,
     });
-  };
-
-  const getFileIcon = (fileName: string) => {
-    if (fileName.endsWith('.pdf')) return <File className="h-4 w-4 text-red-500" />;
-    if (fileName.endsWith('.ai')) return <File className="h-4 w-4 text-amber-500" />;
-    if (fileName.endsWith('.cdr')) return <FileImage className="h-4 w-4 text-blue-500" />;
-    return <FileImage className="h-4 w-4" />;
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -416,7 +395,7 @@ const AdminProducts = () => {
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Size Options</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {currentProduct?.sizeOptions.map((size: string, i: number) => (
+                  {currentProduct?.sizeOptions?.map((size: string, i: number) => (
                     <div key={`size-${i}`} className="flex items-center space-x-2">
                       <Input defaultValue={size} />
                       <Button variant="outline" size="icon">
@@ -436,7 +415,7 @@ const AdminProducts = () => {
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Paper Thickness Options</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {currentProduct?.thicknessOptions.map((thickness: string, i: number) => (
+                  {currentProduct?.thicknessOptions?.map((thickness: string, i: number) => (
                     <div key={`thickness-${i}`} className="flex items-center space-x-2">
                       <Input defaultValue={thickness} />
                       <Button variant="outline" size="icon">
@@ -456,7 +435,7 @@ const AdminProducts = () => {
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Orientation Options</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {currentProduct?.orientationOptions.map((orientation: string, i: number) => (
+                  {currentProduct?.orientationOptions?.map((orientation: string, i: number) => (
                     <div key={`orientation-${i}`} className="flex items-center space-x-2">
                       <Input defaultValue={orientation} />
                       <Button variant="outline" size="icon">
@@ -476,7 +455,7 @@ const AdminProducts = () => {
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Treatment Options</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {currentProduct?.treatmentOptions.map((treatment: string, i: number) => (
+                  {currentProduct?.treatmentOptions?.map((treatment: string, i: number) => (
                     <div key={`treatment-${i}`} className="flex items-center space-x-2">
                       <Input defaultValue={treatment} />
                       <Button variant="outline" size="icon">
@@ -496,7 +475,7 @@ const AdminProducts = () => {
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Quantity Options</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {currentProduct?.quantityOptions.map((quantity: number, i: number) => (
+                  {currentProduct?.quantityOptions?.map((quantity: number, i: number) => (
                     <div key={`quantity-${i}`} className="flex items-center space-x-2">
                       <Input defaultValue={quantity.toString()} type="number" />
                       <Button variant="outline" size="icon">
@@ -676,27 +655,27 @@ const AdminProducts = () => {
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="font-medium">Sizes:</p>
-                  <p>{currentProduct?.sizeOptions.join(', ')}</p>
+                  <p>{currentProduct?.sizeOptions?.join(', ')}</p>
                 </div>
                 
                 <div>
                   <p className="font-medium">Paper Thickness:</p>
-                  <p>{currentProduct?.thicknessOptions.join(', ')}</p>
+                  <p>{currentProduct?.thicknessOptions?.join(', ')}</p>
                 </div>
                 
                 <div>
                   <p className="font-medium">Orientation:</p>
-                  <p>{currentProduct?.orientationOptions.join(', ')}</p>
+                  <p>{currentProduct?.orientationOptions?.join(', ')}</p>
                 </div>
                 
                 <div>
                   <p className="font-medium">Treatment:</p>
-                  <p>{currentProduct?.treatmentOptions.join(', ')}</p>
+                  <p>{currentProduct?.treatmentOptions?.join(', ')}</p>
                 </div>
                 
                 <div>
                   <p className="font-medium">Quantities:</p>
-                  <p>{currentProduct?.quantityOptions.join(', ')}</p>
+                  <p>{currentProduct?.quantityOptions?.join(', ')}</p>
                 </div>
               </div>
             </div>
