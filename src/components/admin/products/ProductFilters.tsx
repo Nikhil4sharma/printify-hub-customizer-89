@@ -12,17 +12,29 @@ interface Category {
 
 interface ProductFiltersProps {
   categories: Category[];
+  onSearch?: (term: string) => void;
+  onCategoryChange?: (categoryId: string) => void;
+  onSortChange?: (sortOption: string) => void;
 }
 
-const ProductFilters: React.FC<ProductFiltersProps> = ({ categories }) => {
+const ProductFilters: React.FC<ProductFiltersProps> = ({ 
+  categories, 
+  onSearch,
+  onCategoryChange,
+  onSortChange
+}) => {
   return (
     <div className="flex items-center justify-between gap-4 flex-wrap">
       <div className="relative flex-1 min-w-[240px]">
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input placeholder="Search products..." className="pl-8" />
+        <Input 
+          placeholder="Search products..." 
+          className="pl-8" 
+          onChange={(e) => onSearch && onSearch(e.target.value)}
+        />
       </div>
       <div className="flex gap-2 flex-wrap">
-        <Select>
+        <Select onValueChange={(value) => onCategoryChange && onCategoryChange(value)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
@@ -38,7 +50,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ categories }) => {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Select>
+        <Select onValueChange={(value) => onSortChange && onSortChange(value)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Sort By" />
           </SelectTrigger>
